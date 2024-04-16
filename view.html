@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title> Wild Gunslinger </title>
+    <link rel="icon" href="img/favicon.png" type="image/png">
+    <link rel="stylesheet" type="text/css" href="css/view.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+
+
+    <script type="importmap">
+        {
+        "imports": {
+            "three": "https://threejs.org/build/three.module.js",
+            "three/addons/": "https://threejs.org/examples/jsm/"
+        }
+        }
+    </script>
+ 
+    <script type="module" src="js/view.js" ></script>
+
+</head>
+
+<body>
+    <div id="Tag3DScene"> 
+    <h1 id="view"> View MODE</h1>
+    <h3 id="auto-rotate"> Auto-Rotate: ON</h3>
+    <button id="back-button" onclick="location.href='index.html';">   <i class="fas fa-light fa-reply fa-8x"></i></button>
+    <div id= "level-buttons">
+        <button id="level1" class="level-button"> Level 1</button>
+        <button id="level2" class="level-button"> Level 2</button>
+    </div>
+
+    <div class ="progress-bar-container">
+        <label for ="progress.bar">LOADING ...</label>
+        <progress id="progress-bar" value="0" max="100"></progress>
+    </div>
+  
+    
+        
+    </div>
+</body>
+
+</html>
