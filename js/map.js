@@ -49,7 +49,6 @@ let ENV_OBJECTS  = [    {"plane":[15, 0, 0]},
 
 
 
-
 const LEVEL1 = [CONFIG,ENV_OBJECTS, ANIMALS];
 
 
@@ -101,6 +100,7 @@ ANIMALS= [{"duck":[50,30, 0]},
                 {"fox":[120, 0, 50]},
                 {"boar":[300, 0, -150]},
                 {"duck":[40, 30, 170]},];
+
 
 
 CONFIG = [{"bullets": 6}]

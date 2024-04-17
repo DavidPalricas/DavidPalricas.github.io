@@ -616,7 +616,7 @@ function End_game(){
     }
             
     //Criar o ecrã de Game Over
-    body.style.backgroundImage = "url('../img/background.jpg')";
+    body.style.backgroundImage = "url('../img/end_game.jpg')";
     body.style.backgroundSize = "cover";
     body.style.backgroundRepeat = "no-repeat";
     body.style.color = "white";
@@ -658,10 +658,10 @@ function End_game(){
     document.head.appendChild(buttons_class);
     
     //Confuguração da classe dos botões
-    buttons_class.sheet.insertRule(".buttons {width: 200px; height: 50px; background-color: #EE0000; color: white; font-size: 20px; border: none; cursor: pointer; border-radius: 5px; margin: 10px;}", 0);
+    buttons_class.sheet.insertRule(".buttons {width: 200px; height: 50px; background-color: wheat; color: black; font-size: 20px; border: none; cursor: pointer; border-radius: 5px; margin: 10px;}", 0);
     
     //Configuração do hover da classe dos botões
-    buttons_class.sheet.insertRule(".buttons:hover {background-color: black; color: #EE0000; transform: scale(1.1); transition: 0.5s;}", 1);
+    buttons_class.sheet.insertRule(".buttons:hover {background-color: #191C1F; color: #EE0000; transform: scale(1.1); transition: 0.5s;}", 1);
 
 
     //Botão para voltar ao menu
@@ -709,7 +709,8 @@ function Game_Over(){
     }
             
             //Criar o ecrã de Game Over
-    body.style.backgroundColor = "black";
+    body.style.backgroundImage = "url('../img/game_over.jpg')";
+    body.style.color = "white";
             
               //Texto Game Over
     let game_over_text = document.createElement("h1");
@@ -721,9 +722,6 @@ function Game_Over(){
     game_over_text.style.left = "44%";
     body.appendChild(game_over_text);
 
-    body.style.backgroundColor = "black";
-
-
     // Novo texto de score
     var score_text = document.createElement("h1");
     score_text.innerHTML = " Your score: " + score;
@@ -731,7 +729,7 @@ function Game_Over(){
     score_text.style.top = "55%";
     score_text.style.left = "45%";
 
-            body.appendChild(score_text);
+    body.appendChild(score_text);
 
 
     //Botão para voltar ao menu
@@ -740,8 +738,8 @@ function Game_Over(){
     back_menu.innerHTML = "Back to Menu";
     back_menu.style.width = "200px";
     back_menu.style.height = "50px";
-    back_menu.style.backgroundColor = "red";
-    back_menu.style.color = "white";
+    back_menu.style.backgroundColor = "wheat";
+    back_menu.style.color = "black";
     back_menu.style.fontSize = "20px";
     back_menu.style.border = "none";
     back_menu.style.cursor = "pointer";
@@ -758,18 +756,20 @@ function Game_Over(){
 
     //Hover
     back_menu.onmouseover = function() {
-        this.style.backgroundColor = "white";
+        this.style.backgroundColor = "#191C1F";
         this.style.color = "#EE0000";
-        this.style.transform = "scale(1.1)";
         this.style.transition = "0.5s";
+        this.style.transform = "scale(1.1)";
 
     }
 
     back_menu.onmouseout = function() {
-        this.style.backgroundColor = "#EE0000";
-        this.style.color = "white";
+        this.style.backgroundColor = "wheat";
+        this.style.color = "black";
         this.style.transition = "0.5s";
         this.style.transform = "scale(1)";
+        
+       
     }
              
     body.appendChild(back_menu);

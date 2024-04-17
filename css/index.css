@@ -38,14 +38,14 @@ body{
 
 
 button{
-    background-color: #EE0000; /* Vermelho */
-    color: #fff; /* Branco */
+    background-color: wheat; /* Vermelho */
+    color: black; /* Branco */
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 20px;
-    text-shadow: 2px 1px #191C1F; /* Sombra preta */
+   text-shadow: 2px 1px wheat; /* Sombra preta */
 }
 
 
@@ -54,6 +54,7 @@ button:hover{
     color: #EE0000; /* Vermelho */
     transform: scale(1.1);
     transition: 0.5s;
+    text-shadow: 2px 1px #191C1F; /* Sombra preta */
 }
 
 
