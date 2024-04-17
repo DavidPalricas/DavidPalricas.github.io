@@ -710,6 +710,8 @@ function Game_Over(){
             
             //Criar o ecrã de Game Over
     body.style.backgroundImage = "url('../img/game_over.jpg')";
+    body.style.backgroundSize = "cover";
+    body.style.backgroundRepeat = "no-repeat";
     body.style.color = "white";
             
               //Texto Game Over
