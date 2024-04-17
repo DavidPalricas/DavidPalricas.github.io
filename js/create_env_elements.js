@@ -40,10 +40,10 @@ function createPlane(level){
     let plane_texture;
 
     if(level == 1){
-        plane_texture = "grass.png";
+        plane_texture = "sand.jpg";
     }
     else if(level == 2){
-        plane_texture = "sand.jpg";
+        plane_texture = "grass.png";
 
     }
   

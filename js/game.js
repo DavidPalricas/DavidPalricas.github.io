@@ -101,7 +101,7 @@ const helper = {
 
 
     const spot_light2 = spot_light1.clone();
-    spot_light2.position.set(300, 60, 0);
+    spot_light2.position.set(240, 60, 0);
     spot_light2.name = "spot_light2";
     
     sceneElements.sceneGraph.add(spot_light2);
@@ -109,7 +109,7 @@ const helper = {
 
 
     const spot_light3 = spot_light1.clone();
-    spot_light3.position.set(550, 60, 0);
+    spot_light3.position.set(440, 60, 0);
     spot_light3.name = "spot_light3";
 
     sceneElements.sceneGraph.add(spot_light3);
@@ -940,6 +940,7 @@ function Change_Level(){
 
 function move_Revoler(){
     const revolver = sceneElements.sceneGraph.getObjectByName("revolver");
+    
     raycaster.setFromCamera(mouse, sceneElements.camera);
     let intersects = raycaster.intersectObjects(sceneElements.sceneGraph.children, true);
     

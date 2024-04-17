@@ -145,7 +145,7 @@ function createDuck() {
     // Prpriedades usadas no movimento do pato
         duck.alive = true;
 
-        duck.speed = 10.8;
+        duck.speed = 6;
 
         duck.step = -0.08;
 
@@ -740,7 +740,7 @@ function createVulture(){
     // Prpriedades usadas no movimento do abutre
 
     vulture.alive = true;
-    vulture.speed = 1.1;
+    vulture.speed = 3.5;
     vulture.step = -0.08;
     vulture.dist = 0; // Distância percorrida pelo pato
     vulture.rotate = -0.5 * Math.PI; // Rotação do pato para inversão do sentido de movimento
@@ -953,7 +953,7 @@ function createCoyote(){
     // Prpriedades usadas no movimento do coiote
 
     coyote.alive = true;
-    coyote.speed = 2.5;
+    coyote.speed = 6.9;
     coyote.step = -0.08;
     coyote.dist = 0; // Distância percorrida pelo pato
     coyote.rotate = -0.5 * Math.PI; // Rotação do pato para inversão do sentido de movimento
