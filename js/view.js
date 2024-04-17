@@ -294,7 +294,7 @@ function computeFrame(time) {
     ANIMALS_LEVEL.forEach(animal => {
         const animal_model = sceneElements.sceneGraph.getObjectByName(animal);
        
-        if (animal_model != undefined   ) {
+        if (animal_model != undefined  ) {
             animate_animal(animal_model,delta);
         }
         
@@ -389,13 +389,14 @@ function onDocumentClick(event) {
 
 }
 function animate_animal(animal,delta){
+    let animal_name;
 
     animal.position.z += animal.speed * animal.step;
     animal.dist = animal.position.z - animal.initial_pos;
 
      
     if (animal.name.includes("duck") || animal.name.includes("vulture")) {
-        let animal_name = animal.name.includes("duck") ? "duck" : "vulture";
+        animal_name = animal.name.includes("duck") ? "duck" : "vulture";
 
         const left_wing = animal.getObjectByName(animal_name + "_left_wing");
         const right_wing = animal.getObjectByName(animal_name + "_right_wing");
@@ -405,15 +406,28 @@ function animate_animal(animal,delta){
         right_wing.rotation.z = - Math.sin(delta * animal.wing_speed) * animal.wing_amplitude;
 
         
-    } else if (animal.name.includes("fox") || animal.name.includes("coyote")) {
-         
+    } else  {
+        
+       
 
-        let animal_name = animal.name.includes("fox") ? "fox" : "coyote";
+        if (animal.name.includes("fox")) {
+            animal_name = "fox";
+            
+        }
+        else if (animal.name.includes("boar")) {
+            animal_name = "boar";
+        }
+        else{
+            animal_name = "coyote";
+        }
+        
 
-        // Animação da cauda
-        const tail = animal.getObjectByName(animal_name + "_tail");
-        tail.rotation.x = Math.sin(delta * animal.tail_speed) * animal.tail_amplitude;
-
+        //Javalis não rodam a cauda deles
+        if(!animal.name.includes("boar")){
+            // Animação da cauda
+            const tail = animal.getObjectByName(animal_name + "_tail");
+            tail.rotation.x = Math.sin(delta * animal.tail_speed) * animal.tail_amplitude;
+        }
 
     
 

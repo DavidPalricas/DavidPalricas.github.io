@@ -574,15 +574,21 @@ function shoot(){
 
     shoot_animal(animal_hunted);
 
-    let animal_killed = target.object.parent;
+    let animal_component = target.object.parent;
+
+    /* Vai procurar a componente pai da componente do animal que o raycaster atingiu
+       até o pai desta ser a cena do jogo, ou seja,
+       até  a compente ser o próprio animal,
+       para removê-lo da cena simulando assim a sua morte 
+    */
     while(true){
-        if (animal_killed.parent.name == "sceneGraph") {
+        if (animal_component.parent.name == "sceneGraph") {
             break;
         }
-        animal_killed = animal_killed.parent;
+        animal_component = animal_component.parent;
     };
 
-    sceneElements.sceneGraph.remove(animal_killed);
+    sceneElements.sceneGraph.remove(animal_component);
 
     
 } 
@@ -824,13 +830,14 @@ function shoot_animal(animal){
 
 
 function animate_animal(animal,delta){
+    let animal_name;
 
     animal.position.z += animal.speed * animal.step;
     animal.dist = animal.position.z - animal.initial_pos;
 
      
     if (animal.name.includes("duck") || animal.name.includes("vulture")) {
-        let animal_name = animal.name.includes("duck") ? "duck" : "vulture";
+        animal_name = animal.name.includes("duck") ? "duck" : "vulture";
 
         const left_wing = animal.getObjectByName(animal_name + "_left_wing");
         const right_wing = animal.getObjectByName(animal_name + "_right_wing");
@@ -840,15 +847,28 @@ function animate_animal(animal,delta){
         right_wing.rotation.z = - Math.sin(delta * animal.wing_speed) * animal.wing_amplitude;
 
         
-    } else if (animal.name.includes("fox") || animal.name.includes("coyote")) {
-         
+    } else  {
+        
+       
 
-        let animal_name = animal.name.includes("fox") ? "fox" : "coyote";
+        if (animal.name.includes("fox")) {
+            animal_name = "fox";
+            
+        }
+        else if (animal.name.includes("boar")) {
+            animal_name = "boar";
+        }
+        else{
+            animal_name = "coyote";
+        }
+        
 
-        // Animação da cauda
-        const tail = animal.getObjectByName(animal_name + "_tail");
-        tail.rotation.x = Math.sin(delta * animal.tail_speed) * animal.tail_amplitude;
-
+        //Javalis não rodam a cauda deles
+        if(!animal.name.includes("boar")){
+            // Animação da cauda
+            const tail = animal.getObjectByName(animal_name + "_tail");
+            tail.rotation.x = Math.sin(delta * animal.tail_speed) * animal.tail_amplitude;
+        }
 
     
 
@@ -880,6 +900,7 @@ function animate_animal(animal,delta){
 
             animal.rotation.y = -animal.rotate; 
         }
+   
 }
 
 

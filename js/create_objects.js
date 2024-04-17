@@ -44,15 +44,24 @@ function createTable(level,n_bullets,mode){
     back_left_leg.name = "back_left_leg";
     const back_right_leg = front_left_leg.clone();
     back_right_leg.name = "back_right_leg";
+    
+    const cowboy_hat = create_Cowboy_Hat();
 
+    const ashtray = create_Ahstray();
+    ashtray.scale.set(1.5,1.5,1.5);
 
     front_left_leg.position.set(body.position.x - 9, body.position.y - 2.5, body.position.z - 9);
     front_right_leg.position.set(front_left_leg.position.x, front_left_leg.position.y, -front_left_leg.position.z)
     back_left_leg.position.set(-front_left_leg.position.x, front_left_leg.position.y, front_left_leg.position.z)
     back_right_leg.position.set(-front_left_leg.position.x, front_left_leg.position.y, -front_left_leg.position.z)
-
     
+    cowboy_hat  .position.set(body.position.x +4, body.position.y + 1, body.position.z +6);
+    ashtray.position.set(body.position.x, body.position.y + 0.5, body.position.z + 2);
+
     const table = new THREE.Group();
+
+    body.add(ashtray);
+    body.add(cowboy_hat);
     table.add(body);
     
 
@@ -226,11 +235,104 @@ function createBullet() {
     bullet.castShadow = true;
     return bullet;
 
+}
+
+
+
+function create_Cowboy_Hat(){
+
+    const hat_color = 0x654321;
+
+    //Parte de baixo do chapéu
+    const bottom_geometry = new THREE.CylinderGeometry(2, 3, 0.5, 32);
+    const bottom_material = new THREE.MeshPhongMaterial({ color: hat_color}); 
+    const bottom = new THREE.Mesh(bottom_geometry, bottom_material);
+    bottom.name = "hat_bottom";
+    bottom.castShadow = true;
+    
+    //Fivela do chapéu
+    const buckle_geometry = new THREE.CylinderGeometry(0.5, 2, 0.5);
+    const buckle_material = new THREE.MeshPhongMaterial({ color: 0x000000}); // Azul claro
+    const buckle = new THREE.Mesh(buckle_geometry, buckle_material);
+    buckle.name = "hat_buckle";
+    buckle.castShadow = true;
+
+    //Parte de cima do chapéu
+    const top_geometry = new THREE.CylinderGeometry(1, 2, 2, 20);
+    const top_material = new THREE.MeshPhongMaterial({ color: hat_color }); // Preto
+    const top = new THREE.Mesh(top_geometry, top_material);
+  
+    
+    top.name = "hat_top";
+    top.castShadow = true;
+
+    bottom.position.set(0, 0, 0);
+    top.position.set(bottom.position.x, bottom.position.y + 0.75, bottom.position.z);
+    buckle.position.set(bottom.position.x, bottom.position.y + 0.5, bottom.position.z);
+
+    const cowboy_hat = new THREE.Group();
+    cowboy_hat.add(bottom);
+    cowboy_hat.add(buckle);
+    cowboy_hat.add(top);
+    cowboy_hat.castShadow = true;
+    cowboy_hat.name = "cowboy_hat";
+    return cowboy_hat;
+}
 
 
 
 
+function create_Ahstray(){
+    //Base do cinzeiro
+    const base_geometry = new THREE.CylinderGeometry(1, 1, 0.2);
+    const base_material = new THREE.MeshPhongMaterial({ color: 0x000000 }); // Preto
+    const base = new THREE.Mesh(base_geometry, base_material);
+    base.name = "ashtray";
+    base.castShadow = true;
 
+    //Cinzas do cinzeiro
+    const ashes_geometry = new THREE.CylinderGeometry(0.5, 0.8, 0.2);
+    const ashes_material = new THREE.MeshPhongMaterial({ color: 0x808080 }); // Cinzento
+    const ashes = new THREE.Mesh(ashes_geometry, ashes_material);
+    
+    const cigar = create_Cigar();
+    cigar.scale.set(0.6,0.6,0.6);
+    cigar.rotation.x = -0.8 * Math.PI;
+
+    base.position.set(0, 0, 0);
+    ashes.position.set(base.position.x, base.position.y + 0.1, base.position.z);
+    cigar.position.set(ashes.position.x, ashes.position.y + 0.28, ashes.position.z + 0.2);
+
+    const ashtray = new THREE.Group();
+    ashes.add(cigar);
+    base.add(ashes);
+    ashtray.add(base);
+    return ashtray;
+}
+
+
+
+function create_Cigar(){
+    const body_geometry = new THREE.CylinderGeometry(0.1, 0.1, 1);
+    const body_material = new THREE.MeshPhongMaterial({ color: 0x8B4513 }); // Castanho
+    const body = new THREE.Mesh(body_geometry, body_material);
+    body.name = "cigar_body";
+    body.castShadow = true;
+
+    //Ponta do cigarro
+    const head_geometry = new THREE.CylinderGeometry(0.1, 0.1, 0.2);
+    const head_material = new THREE.MeshPhongMaterial({ color: 0x000000 }); // Preto
+    const head = new THREE.Mesh(head_geometry, head_material);
+    head.name = "cigar_head";
+    head.castShadow = true;
+
+    head.position.set(body.position.x, body.position.y + 0.5, body.position.z);
+
+    const cigar = new THREE.Group();
+    cigar.add(body);
+    cigar.add(head);
+    cigar.castShadow = true;
+    return cigar;
 }
 
 

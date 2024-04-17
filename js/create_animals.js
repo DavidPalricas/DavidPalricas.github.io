@@ -145,7 +145,7 @@ function createDuck() {
     // Prpriedades usadas no movimento do pato
         duck.alive = true;
 
-        duck.speed = 1.1;
+        duck.speed = 10.8;
 
         duck.step = -0.08;
 
@@ -384,7 +384,7 @@ function createFox() {
       // Prpriedades usadas no movimento do pato
       fox.alive = true;
 
-      fox.speed = 3;
+      fox.speed = 5.04;
 
       fox.step = -0.08;
 
@@ -420,7 +420,7 @@ function createBoar() {
     left_ear.castShadow = true;
     const right_ear = left_ear.clone();
     right_ear.name = "boar_right_ear";
-    right_ear.castShadow = true;
+
 
     //Sobrancelhas do javali
     const left_eyebrow_geometry = new THREE.BoxGeometry(0.5, 4.3, 2);
@@ -428,9 +428,15 @@ function createBoar() {
     const left_eyebrow = new THREE.Mesh(left_eyebrow_geometry, left_eyebrow_material);
     left_eyebrow.name = "boar_left_eyebrow";
     left_eyebrow.castShadow = true;
+
+    left_eyebrow.rotation.y = -0.2 * Math.PI;
+    left_eyebrow.rotation.z = -0.9 * Math.PI;
+  
     const right_eyebrow = left_eyebrow.clone();
     right_eyebrow.name = "boar_right_eyebrow";
     right_eyebrow.castShadow = true;
+    right_eyebrow.rotation.y =  - left_eyebrow.rotation.y;
+   
 
     //Olhos do javali
     const left_eye_geometry = new THREE.SphereGeometry(0.8);
@@ -478,6 +484,7 @@ function createBoar() {
     const left_tusk = new THREE.Mesh(left_tusk_geometry, left_tusk_material);
     left_tusk.name = "boar_left_tusk";
     left_tusk.castShadow = true;
+    left_tusk.rotation.z = -Math.PI;
     const right_tusk = left_tusk.clone();
     right_tusk.name = "boar_right_tusk";
     right_tusk.castShadow = true;
@@ -495,19 +502,22 @@ function createBoar() {
     const tail = new THREE.Mesh(tail_geometry, tail_material);
     tail.name = "boar_tail";
     tail.castShadow = true;
+    tail.rotation.z = 0.5 * Math.PI;
 
 
     //Pernas do javali
     const left_front_leg_geometry = new THREE.CylinderGeometry(1.5, 1.5, 5);
     const left_front_leg_material = new THREE.MeshPhongMaterial({ color: 0x8B6C5C }); // Preto acinzentado
     const left_front_leg = new THREE.Mesh(left_front_leg_geometry, left_front_leg_material);
-    left_front_leg.name = "boar_left_front_leg";
+    left_front_leg.name = "boar_front_left_leg";
+    left_front_leg.castShadow = true;
+    left_front_leg.rotation.z = 0.5 * Math.PI;
     const right_front_leg = left_front_leg.clone();
-    right_front_leg.name = "boar_right_front_leg";
+    right_front_leg.name = "boar_front_right_leg";
     const left_back_leg = left_front_leg.clone();
-    left_back_leg.name = "boar_left_back_leg";
+    left_back_leg.name = "boar_back_left_leg";
     const right_back_leg = left_front_leg.clone();
-    right_back_leg.name = "boar_right_back_leg";
+    right_back_leg.name = "boar_back_right_leg";
 
     // Cascos do javali
     const left_front_hoof_geometry = new THREE.CylinderGeometry(1.5, 1.5, 1);
@@ -527,80 +537,74 @@ function createBoar() {
     body.position.set(0, 7.5, 0);
     body.rotation.z = -0.5 * Math.PI;
 
-    left_ear.position.set(body.position.x + 5, body.position.y + 5.5, body.position.z + 2);
-    left_ear.rotation.z = -0.5 * Math.PI;
-    right_ear.position.set(body.position.x + 5, body.position.y + 5.5, body.position.z - 2);
-    right_ear.rotation.z = -0.5 * Math.PI;
+    left_ear.position.set(body.position.x - 5.2, body.position.y - 2, body.position.z + 2);
+    right_ear.position.set(body.position.x - 5.2, body.position.y -2, body.position.z - 2);
 
-    left_eyebrow.position.set(body.position.x + 5.8, body.position.y + 3.5, body.position.z + 1.5);
-    left_eyebrow.rotation.z = -0.5 * Math.PI;
-    left_eyebrow.rotation.x = -0.2 * Math.PI;
-    right_eyebrow.position.set(body.position.x + 5.8, body.position.y + 3.5, body.position.z - 1.5);
-    right_eyebrow.rotation.z = -0.5 * Math.PI;
-    right_eyebrow.rotation.x = 0.2 * Math.PI;
 
-    left_eye.position.set(body.position.x + 8, body.position.y + 2, body.position.z + 2);
-    right_eye.position.set(body.position.x + 8, body.position.y + 2, body.position.z - 2);
+    left_eyebrow.position.set(body.position.x -3, body.position.y -1.5, body.position.z + 1.5);
+    right_eyebrow.position.set(body.position.x -3, body.position.y -1.5, body.position.z - 1.5);
+    
+    
+    left_eye.position.set(body.position.x -2.3 , body.position.y +0.6 , body.position.z + 1.7);
+    right_eye.position.set(body.position.x -2.3, body.position.y + 0.6 , body.position.z - 1.7);
 
-    left_pupil.position.set(left_eye.position.x + 0.4, left_eye.position.y + 0.2, left_eye.position.z);
-    right_pupil.position.set(right_eye.position.x + 0.4, right_eye.position.y + 0.2, right_eye.position.z);
+    left_pupil.position.set(left_eye.position.x +2.2, left_eye.position.y -7.6 , left_eye.position.z -1.6);
+    right_pupil.position.set(right_eye.position.x +2.2, right_eye.position.y -7.6, right_eye.position.z +1.6);
 
-    nose.position.set(body.position.x + 8, body.position.y, body.position.z);
+    nose.position.set(body.position.x , body.position.y+0.5, body.position.z);
 
-    left_nostril.position.set(nose.position.x + 1.5, nose.position.y, nose.position.z + 0.5);
-    right_nostril.position.set(nose.position.x + 1.5, nose.position.y, nose.position.z - 0.5);
+    left_nostril.position.set(nose.position.x , nose.position.y -6.6, nose.position.z + 0.5);
+    right_nostril.position.set(nose.position.x , nose.position.y-6.6, nose.position.z - 0.5);
 
-    left_tusk.position.set(nose.position.x + 1.5, nose.position.y - 1, nose.position.z + 1.5);
-    left_tusk.rotation.z = 0.5 * Math.PI;
-    right_tusk.position.set(nose.position.x + 1.5, nose.position.y - 1, nose.position.z - 1.5);
-    right_tusk.rotation.z = 0.5 * Math.PI;
+    left_tusk.position.set(nose.position.x + 1 , nose.position.y +1.5, nose.position.z + 1.5);
 
-    tail.position.set(body.position.x - 10, body.position.y + 2, body.position.z + 1.5);
-    tail.rotation.x = 0.2 * Math.PI;
+    right_tusk.position.set(nose.position.x +1, nose.position.y +1.5, nose.position.z - 1.5);
+
+
+    tail.position.set(body.position.x - 2, body.position.y -17.5, body.position.z );
 
 
     left_front_leg.position.set(body.position.x + 4, body.position.y - 4.5, body.position.z + 3);
-    right_front_leg.position.set(body.position.x + 4, body.position.y - 4.5, body.position.z - 3);
-    left_back_leg.position.set(body.position.x - 4, body.position.y - 4.5, body.position.z + 3);
-    right_back_leg.position.set(body.position.x - 4, body.position.y - 4.5, body.position.z - 3);
+    right_front_leg.position.set(left_front_leg.position.x, left_front_leg.position.y, -left_front_leg.position.z);
+
+    left_back_leg.position.set(left_front_leg.position.y +1, -left_front_leg.position.x  , left_front_leg.position.z);
+    right_back_leg.position.set(right_front_leg.position.y +1, -right_front_leg.position.x, right_front_leg.position.z);
 
 
-    left_front_hoof.position.set(left_front_leg.position.x, left_front_leg.position.y - 3, left_front_leg.position.z);
-    right_front_hoof.position.set(right_front_leg.position.x, right_front_leg.position.y - 3, right_front_leg.position.z);
-    left_back_hoof.position.set(left_back_leg.position.x, left_back_leg.position.y - 3, left_back_leg.position.z);
-    right_back_hoof.position.set(right_back_leg.position.x, right_back_leg.position.y - 3, right_back_leg.position.z);
+    left_front_hoof.position.set(left_front_leg.position.x -4, left_front_leg.position.y - 6, left_front_leg.position.z-3);
+    right_front_hoof.position.set(right_front_leg.position.x -4, right_front_leg.position.y - 6, right_front_leg.position.z +3);
 
-
+    left_back_hoof.position.set(-left_front_hoof.position.x, left_front_hoof.position.y, left_front_hoof.position.z);
+    right_back_hoof.position.set(-right_front_hoof.position.x, right_front_hoof.position.y, right_front_hoof.position.z);
 
 
 
     const boar = new THREE.Group();
 
-
+    //Adicionar a cabeça e seus elementos ao Javali
+    left_back_leg.add(left_back_hoof);
+    right_back_leg.add(right_back_hoof);
+    left_front_leg.add(left_front_hoof);
+    right_front_leg.add(right_front_hoof);
+    nose.add(left_nostril);
+    nose.add(right_nostril);
+    left_eye.add(left_pupil);
+    right_eye.add(right_pupil);
+    body.add(left_ear);
+    body.add(right_ear);
+    body.add(left_eyebrow);
+    body.add(right_eyebrow);
+    body.add(left_eye);
+    body.add(right_eye);
+    body.add(nose);
+    body.add(left_tusk);
+    body.add(right_tusk);
+    body.add(tail);
+    body.add(left_front_leg);
+    body.add(right_front_leg);
+    body.add(left_back_leg);
+    body.add(right_back_leg);
     boar.add(body);
-    boar.add(left_ear);
-    boar.add(right_ear);
-    boar.add(left_eyebrow);
-    boar.add(right_eyebrow);
-    boar.add(left_eye);
-    boar.add(right_eye);
-    boar.add(left_pupil);
-    boar.add(right_pupil);
-    boar.add(nose);
-    boar.add(left_nostril);
-    boar.add(right_nostril);
-    boar.add(left_tusk);
-    boar.add(right_tusk);
-    boar.add(left_front_leg);
-    boar.add(right_front_leg);
-    boar.add(tail);
-    boar.add(left_back_leg);
-    boar.add(right_back_leg);
-    boar.add(left_front_hoof);
-    boar.add(right_front_hoof);
-    boar.add(left_back_hoof);
-    boar.add(right_back_hoof);
-
 
     boar.castShadowShadow = true;
 
@@ -608,13 +612,17 @@ function createBoar() {
       // Prpriedades usadas no movimento do pato
       boar.alive = true;
 
-      boar.speed = 1.8;
+      boar.speed = 6;
 
       boar.step = -0.08;
 
       boar.rotate = -0.5 * Math.PI; // Rotação do javali para inversão do sentido de movimento
 
-      boar.dist = 0; // Distância percorrida pelo pato
+      boar.dist = 0; // Distância percorrida pelo javali
+
+      boar.leg_amplitude = Math.PI/2; // Amplitude do movimento das pernas do javali
+
+      boar.leg_speed = 1; // Velocidade do movimento das pernas do javali
 
     return boar;
 
