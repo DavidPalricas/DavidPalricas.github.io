@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { createMesh } from "./get_texture.js";
 
 
 export function create_Env_models(model,level){
@@ -7,22 +8,25 @@ export function create_Env_models(model,level){
             model = createPlane(level);
             break;
         case "tree":
-            model = createTree();
+            model = createTree(level);
             break;
         case "rock":
-            model = createRock();
+            model = createRock(level);
             break;
         case "lake":
             model = createLake();
             break;
 
         case "bush":
-            model = createBush();
+            model = createBush(level);
             break;
 
         case "cactus":
             model = createCactus();
             break;
+
+
+        
         default:
             break;
     }
@@ -46,6 +50,13 @@ function createPlane(level){
         plane_texture = "grass.png";
 
     }
+    else if(level == 3){
+        plane_texture = "snow.jpg";
+
+    }
+    else{
+        plane_texture = "canyon.jpg";
+    }
   
 
     const planeGeometry = new THREE.PlaneGeometry(1000, 700);
@@ -65,7 +76,15 @@ function createPlane(level){
 
 
 
-function createTree() {
+function createTree(level) {
+    let leaves_color;
+    if(level != 3){
+        leaves_color = 0x228B22; // Green
+       
+    }
+    else{
+        leaves_color = 0x013220; // Verde Escuro
+    }
     const cylinderRadius = 5;
 
     const cylinderHeight = 50;
@@ -83,13 +102,15 @@ function createTree() {
 
     // Cone
 
+  
+
     const baseConeRadius = 12;
 
     const coneHeight = 25;
 
     const coneGeometry = new THREE.ConeGeometry(baseConeRadius, coneHeight, 32);
 
-    const greenMaterial = new THREE.MeshPhongMaterial({ color: 0x228B22});
+    const greenMaterial = new THREE.MeshPhongMaterial({ color: leaves_color});
 
     const cone = new THREE.Mesh(coneGeometry, greenMaterial);
     cone.castShadow = true;
@@ -109,6 +130,13 @@ function createTree() {
 
     tree.add(cone);
 
+
+    if(level == 3){
+        const snow = createMesh(new THREE.ConeGeometry(11,22), "snow.jpg");
+        snow.position.set(cone.position.x,cone.position.y- 60,cone.position.z);
+        cone.add(snow);
+    }
+
     tree.castShadow = true;
 
 
@@ -120,16 +148,35 @@ function createTree() {
 }
 
 
-function createRock() {
-    const geometry = new THREE.SphereGeometry(5);
-    const material = new THREE.MeshPhongMaterial({ color: 0x808080 });
-    const rock = new THREE.Mesh(geometry, material);
+function createRock(level) {
+    let rock_color;
 
+    if(level != 4){
+        rock_color = 0x808080; // Cinzento
+
+    }else{
+        rock_color = 0xB26B5D; //Cor de rocha ddo grand canyon
+
+    }
+    const geometry = new THREE.SphereGeometry(5);
+    const material = new THREE.MeshPhongMaterial({ color: rock_color });
+    const rock_mesh = new THREE.Mesh(geometry, material);
+     
+    const rock = new THREE.Group();
+    rock.add(rock_mesh);
     rock.rotation.x = -0.5 * Math.PI;
 
 
     rock.castShadow= true;
     rock.receiveShadow = true;
+
+
+    if (level == 3) {
+        const snow = createMesh(new THREE.SphereGeometry(4.5), "snow.jpg");
+        snow.position.set(rock.position.x, rock.position.y, rock.position.z+2);
+        rock.add(snow);
+        
+    }
 
 
 
@@ -163,22 +210,41 @@ function createLake() {
 }
 
 
-function createBush() {
+function createBush(level) {
+
+    let bush_color; 
+
+
+    if(level != 3){
+        bush_color = 0x228B22; // Green
+    }else{
+        bush_color = 0x013220; // Verde Escuro
+    }
+
     const geometry = new THREE.SphereGeometry(5);
-    const material = new THREE.MeshPhongMaterial({ color: 0x228B22});
-    const bush = new THREE.Mesh(geometry, material);
+    const material = new THREE.MeshPhongMaterial({ color: bush_color});
+    const bush_mesh = new THREE.Mesh(geometry, material);
+     
+    const bush = new THREE.Group();
 
 
 
+    bush.add(bush_mesh);
     bush.castShadow= true;
     bush.receiveShadow = true;
+
+    if (level == 3) {
+        const snow = createMesh(new THREE.SphereGeometry(4.5), "snow.jpg");
+        snow.position.set(bush.position.x, bush.position.y+2, bush.position.z);
+        bush.add(snow);
+        
+    }
 
     return bush;
 }
 
 function createCactus() {
     const body_geometry = new THREE.CapsuleGeometry(1.5, 10);
-    const body_material = new THREE.MeshPhongMaterial({ color: 0x228B22 });
     const body = createMesh(body_geometry, "cactus.jpg");
 
     body.castShadow = true;
@@ -193,12 +259,6 @@ function createCactus() {
 
 
 
-function createMesh(geom, imageFile) {
-    const texture = new THREE.TextureLoader().load("../textures/" + imageFile);
-    texture.minFilter = THREE.LinearFilter; // Ou use outras opções de filtragem
-    const material = new THREE.MeshStandardMaterial({ map: texture });
-   
-    const mesh = new THREE.Mesh(geom, material);
-    return mesh;
-}
+
+
 

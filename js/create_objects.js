@@ -11,6 +11,11 @@ export function createObjects(model,level,n_bullets,mode){
         case "revolver":
               model = createRevolver();
                 break;
+
+
+        case "house":
+            model = createHouse();
+            break;
     
         default:
             break;
@@ -333,6 +338,40 @@ function create_Cigar(){
     cigar.add(head);
     cigar.castShadow = true;
     return cigar;
+}
+
+
+
+function createHouse(){
+    const body_geometry = new THREE.BoxGeometry(60, 60, 60);
+    const body_material = new THREE.MeshPhongMaterial({ color: 0xC09D73 }); // Castanho amarelado
+    const body = new THREE.Mesh(body_geometry, body_material);
+
+
+    const roof_geometry = new THREE.ConeGeometry(42, 20, 4);
+    const roof_material = new THREE.MeshPhongMaterial({ color: 0xA44A4A}); // Vermelho morto
+    const roof = new THREE.Mesh(roof_geometry, roof_material);
+
+
+    const door_geometry = new THREE.BoxGeometry(10, 50, 1);
+    const door_material = new THREE.MeshPhongMaterial({ color: 0x8B4513 }); // Castanho escuro
+    const door = new THREE.Mesh(door_geometry, door_material);
+
+    roof.position.set(body.position.x, body.position.y + 40, body.position.z);
+    roof.rotation.y = 0.25 * Math.PI;
+
+    door.position.set(body.position.x - 30, body.position.y - 10, body.position.z );
+    door.rotation.y = 0.5 *Math.PI;
+
+
+    door.castShadow = true;
+
+
+    const house = new THREE.Group();
+    body.add(door);
+    house.add(body);
+    house.add(roof);
+    return house;
 }
 
 

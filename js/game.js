@@ -5,11 +5,18 @@ import {MAP} from "./map.js";
 import { create_Animal_Model } from "./create_animals.js";
 import { create_Env_models } from "./create_env_elements.js";
 import { createObjects } from "./create_objects.js";
+import { createMesh } from "./get_texture.js";
 
 
+const rain = [];
+let israin = false;
 
+let cheatcodes = {"django":false,"draw":false,"deadeye":false};
+
+let all_cheats_used = 0;
 
 let gun_grabbed = false;
+let night = false;
 let n_bullets;
 let bullet = document.getElementById("n_bullets");
 let camera_rotate_left = false;
@@ -36,7 +43,7 @@ let level_text = document.getElementById("level");
 let raycaster = new THREE.Raycaster();
 let mouse = new THREE.Vector2();
 
-
+let cheatcode_input = "";
 
 let animals_count;
 
@@ -174,7 +181,20 @@ const helper = {
 
 const scene = {
     load3DObjects: function(sceneGraph) {
-      
+
+
+
+      if(israin==true && (level == 2 || level == 3)){
+        sceneElements.renderer.setClearColor(0x708090, 1.0);
+        create_Rain_Snow();
+
+      }else if(israin == true  && (level == 1 || level == 4)){
+           if(night){
+               sceneElements.renderer.setClearColor(0x000000, 1.0);
+              }else{
+                sceneElements.renderer.setClearColor(0x87CEEB, 1.0);
+                }
+        }      
   
       const LEVEL = MAP[level-1];
        
@@ -206,12 +226,12 @@ const scene = {
                     element_model = create_Env_models(element_name,level);
                     break;
                 case "tree":
-                    element_model = create_Env_models(element_name);
+                    element_model = create_Env_models(element_name,level);
                     element_model.name = "tree" + tree_id;
                     tree_id++;
                     break;
                 case "rock":
-                    element_model = create_Env_models(element_name);
+                    element_model = create_Env_models(element_name,level);
                     element_model.name = "rock" + rock_id;
                     rock_id++;
                     break;
@@ -220,7 +240,7 @@ const scene = {
                     element_model.scale.set(2, 2, 2);
                     break;
                 case "bush":
-                    element_model = create_Env_models(element_name);
+                    element_model = create_Env_models(element_name,level);
                     element_model.name = "bush" + bush_id;
                     bush_id++;
                     break;
@@ -244,6 +264,11 @@ const scene = {
 
             element_model.position.set(element_pos[0], element_pos[1], element_pos[2]);
             sceneGraph.add(element_model);
+
+
+
+
+           
 
 
          }
@@ -274,7 +299,7 @@ const scene = {
                     duck_id++;
                     break;
                 case "fox":
-                    animal_model = create_Animal_Model(animal_name);
+                    animal_model = create_Animal_Model(animal_name,level);
                     animal_model.rotation.y = 0.5 *Math.PI;
                     animal_model.name = animal_name + fox_id;
                     fox_id++;
@@ -322,6 +347,14 @@ const scene = {
         const table = createObjects("table",level, n_bullets,mode);
         sceneGraph.add(table);
 
+
+        if (level == 4) {
+            const house = createObjects("house",level, n_bullets,mode);
+            house.position.set(200, 0, 0);
+            sceneGraph.add(house);
+            
+        }
+
     }
 };
 
@@ -338,6 +371,8 @@ function computeFrame(time) {
         
     }
 
+ 
+
     ANIMALS_LEVEL.forEach(animal => {
         const animal_model = sceneElements.sceneGraph.getObjectByName(animal);
        
@@ -346,6 +381,23 @@ function computeFrame(time) {
         }
         
     });
+
+
+    if ( israin ){
+        for (let i = 0; i < rain.length; i++) {
+            // Mova o floco de neve para baixo
+            rain[i].position.y -= 0.5; // Altere a velocidade de queda ajustando este valor
+            // Se o floco de neve atingir o chão, coloque-o de volta no topo
+            if (rain[i].position.y < -10) {
+                rain[i].position.y = 20;
+            }
+        }
+    }
+
+ 
+    
+    
+
     
    helper.render(sceneElements);
    requestAnimationFrame(computeFrame);
@@ -356,6 +408,7 @@ window.addEventListener('resize', resizeWindow);
 document.addEventListener('keydown', onDocumentKeyDown, false);
 document.addEventListener('keyup', onDocumentKeyUp, false);
 document.addEventListener('click', fire_gun, false);
+
 
 
 // Atualização da posição do mouse
@@ -371,6 +424,11 @@ window.addEventListener('mousemove', function(event) {
 function onDocumentKeyDown(event) {
     switch (event.keyCode) {
         case 65: //a
+            if(all_cheats_used < Object.keys(cheatcodes).length){
+                cheatcode_input += "a";
+
+            }
+            
             camera_rotate_left = true;
             if (camera_look > -20 && gun_grabbed == true){
                 left.style.opacity = 1;
@@ -378,8 +436,13 @@ function onDocumentKeyDown(event) {
                 sceneElements.camera.lookAt(20, 12, camera_look);
             }
             break;
-          
+        
+    
         case 68: //d
+            if(all_cheats_used < Object.keys(cheatcodes).length){
+                cheatcode_input += "d";
+
+            }
             camera_rotate_right = true;
             if (camera_look < 20 && gun_grabbed == true){
                 right.style.opacity = 1;
@@ -389,12 +452,87 @@ function onDocumentKeyDown(event) {
            
             break;
         case 69: //e
-            Grab_Gun();
+            if(all_cheats_used < Object.keys(cheatcodes).length){
+                cheatcode_input += "e";
+                Cheatcodes("deadeye");
+
+            }
+            if (!gun_grabbed){
+                Grab_Gun();
+            }
+            
            
-            break;        
+            break;
+        case 71: //g
+            if(all_cheats_used < Object.keys(cheatcodes).length){
+                    cheatcode_input += "g";
+
+            }
+            break; 
+        case 74: //j
+             if(all_cheats_used < Object.keys(cheatcodes).length){
+                cheatcode_input += "j";
+
+              }
+              break;
+
+        case 77: //m
+            if(all_cheats_used < Object.keys(cheatcodes).length){
+                cheatcode_input += "m";
+
+            }
+            break;
+
+        case 78: //n
+            if(all_cheats_used < Object.keys(cheatcodes).length){
+                cheatcode_input += "n";
+
+            }
+            switch_day_night();
+            break;
+
+        case 79: //o
+            if(all_cheats_used < Object.keys(cheatcodes).length){
+                cheatcode_input += "o";
+                Cheatcodes("django");
+
+            }
+            
+            break;
+
+        case 82: //r
+               
+            if((level == 2 || level == 3 )){ // rain.length para evitar spam de chuva
+
+                switch_rain_snow();
+
+            }
+            if(all_cheats_used < Object.keys(cheatcodes).length){
+                cheatcode_input += "r";
+
+            }
+            break;
+
+        case 87: //w
+            if(all_cheats_used < Object.keys(cheatcodes).length){
+                cheatcode_input += "w";
+                Cheatcodes("draw");
+
+            }
+            break;
+
+        case 89: //y
+            if(all_cheats_used < Object.keys(cheatcodes).length){
+                cheatcode_input += "y";
+                
+
+            }
+            break;
+
         default:
             break;
     }
+
 }
 
 
@@ -464,13 +602,7 @@ function Grab_Gun() {
 function fire_gun(event) {
     if (n_bullets > 0 && gun_grabbed == true) {
         shoot();
-        const table_body = sceneElements.sceneGraph.getObjectByName("table").getObjectByName("body");
-     
-
-        table_body.remove(table_body.getObjectByName("bullet" + n_bullets));
-        
-
-       
+         
         const audioLoader = new THREE.AudioLoader();
         audioLoader.load( '../sounds/revolver_shot.mp3', function( buffer ) {
             const sound = helper.sound;
@@ -479,11 +611,26 @@ function fire_gun(event) {
             sound.setVolume( 0.5 );
             sound.play();
         });
-        n_bullets--;
-    
-        //Atualizar o número de balas no ecrã
-        bullet.innerHTML = "X" + n_bullets;
 
+        
+        if (!cheatcodes["draw"]) {
+            const table_body = sceneElements.sceneGraph.getObjectByName("table").getObjectByName("body");
+     
+
+            table_body.remove(table_body.getObjectByName("bullet" + n_bullets));
+            
+    
+           
+        
+            n_bullets--;
+        
+            //Atualizar o número de balas no ecrã
+            bullet.innerHTML = "X" + n_bullets;
+    
+            
+        }
+
+       
 
         if (n_bullets == 0 && animals_count > 0) {
 
@@ -916,6 +1063,9 @@ function Change_Level(){
 
     //Limpar o array de animais do nível anterior
     ANIMALS_LEVEL.length = 0;
+
+
+    rain.length = 0;
                 
     //Remover todos os elementos da cena exceto o revolver e as luzes
     // Para o jogador não ter que apanhar o revolver novamente
@@ -992,9 +1142,19 @@ function Loading_Screen(){
 
 function createTimer(){
     let timer = setInterval(function() {
-       
+
+
+        if (game_time == null) {
+            clearInterval(timer);
+            return;
+            
+        }
+        
         game_time--;
         show_time.innerHTML = game_time +"s ";
+
+        
+        
         if (game_time == 0) {
             clearInterval(timer);
             Game_Over();
@@ -1002,6 +1162,144 @@ function createTimer(){
         }
     }, 1000);
 }
+
+
+function switch_day_night(){
+
+    if (night == false) {
+        if (!israin || (level == 1 || level == 4)) {
+            sceneElements.renderer.setClearColor(0x708090, 1.0);
+        }
+     
+        night = true;
+
+        sceneElements.sceneGraph.getObjectByName("ambient_light").intensity = 0;
+        sceneElements.sceneGraph.getObjectByName("spot_light1").intensity = 40;
+        sceneElements.sceneGraph.getObjectByName("spot_light2").intensity = 40;
+        sceneElements.sceneGraph.getObjectByName("spot_light3").intensity = 40;
+
+    }else{
+        if (!israin || (level == 1 || level == 4)) {
+            sceneElements.renderer.setClearColor(0x87CEEB, 1.0);
+
+        }
+        night = false;
+
+        sceneElements.sceneGraph.getObjectByName("ambient_light").intensity = 0.7;
+        sceneElements.sceneGraph.getObjectByName("spot_light1").intensity = 170;
+        sceneElements.sceneGraph.getObjectByName("spot_light2").intensity = 170;
+        sceneElements.sceneGraph.getObjectByName("spot_light3").intensity = 170;
+    }
+    
+    
+
+
+}
+
+
+function Cheatcodes(cheatcode){
+
+    if (!gun_grabbed) {
+        cheatcode_input = "";
+        return;
+        
+    }
+
+    if (cheatcode_input.includes(cheatcode)) {
+        cheatcodes[cheatcode] = true;
+        if (cheatcode == "django") {
+            level = MAP.length;
+            Change_Level();
+            
+        }
+        else if (cheatcode == "deadeye"){
+            game_time = null;
+            show_time.innerHTML = "Unlimited";
+
+        }
+        cheatcode_input = ""; //Limpa o input 
+        all_cheats_used++;
+
+        let cheatcode_activaded = document.createElement("h1");
+        cheatcode_activaded.innerHTML = "Cheatcode Activated";
+        cheatcode_activaded.style.position = "absolute";
+        cheatcode_activaded.style.top = "50%";
+        cheatcode_activaded.style.left = "40%";
+        cheatcode_activaded.style.animation = "blink 1s infinite";
+        document.body.appendChild(cheatcode_activaded);
+
+
+        setTimeout(function() {
+            document.body.removeChild(cheatcode_activaded);
+        
+        }, 3000);
+
+
+    }
+
+  
+}
+
+
+
+function switch_rain_snow(){
+    if (!israin ) {
+
+            create_Rain_Snow();
+            israin = true;
+
+
+    }else{
+        if (night) {
+            sceneElements.renderer.setClearColor(0x000000 , 1.0);
+            
+        }else{
+            sceneElements.renderer.setClearColor(0x87CEEB, 1.0);
+        }
+        rain.forEach(element => {
+            sceneElements.sceneGraph.remove(element);
+        });
+
+        rain.length = 0;
+        israin = false;
+
+    }
+
+
+
+}
+
+
+
+function create_Rain_Snow(){
+    let element;
+    const geometry = new THREE.SphereGeometry(0.5);
+
+    sceneElements.renderer.setClearColor(0x708090, 1.0);
+
+
+    if (level == 2) {
+        const material = new THREE.MeshBasicMaterial({color: 0x0000FF}); //Pingo de chuva
+        element = new THREE.Mesh(geometry, material);
+    }else if (level == 3) {
+        element = new createMesh(geometry, "snow.jpg"); //Floco de neve
+    }
+
+    for (let i = 0; i < 2000; i++) {
+        element = element.clone();
+        element.position.set( 
+            Math.random() * 1000 - 500, //Math.random() * comprimento_terreno - comprimento_terreno/2;
+            Math.random() * 600,      
+            Math.random() * 700 - 350  //Math.random() * largura_terreno - largura_terreno/2;               
+
+        );
+        sceneElements.sceneGraph.add(element);
+        rain.push(element);
+    }
+
+}
+
+
 
 
 init();

@@ -1,11 +1,11 @@
 import * as THREE from "three";
-export function create_Animal_Model(model){
+export function create_Animal_Model(model,level){
    switch (model) {
     case "duck":
         model = createDuck();
         break;
     case "fox":
-        model = createFox();
+        model = createFox(level);
         break;
    
     case "boar":
@@ -166,10 +166,22 @@ function createDuck() {
 
 
 
-function createFox() {
+function createFox(level) {
+
+
+    let fox_pur;
+   
+
+    if (level != 3) {
+        fox_pur = 0xFFA500; // Laranja
+            
+    }
+    else{
+        fox_pur = 0xFFFFFF; 
+    }
     //Cabeça da raposa
     const head_geometry = new THREE.SphereGeometry(2);
-    const head_material = new THREE.MeshPhongMaterial({ color: 0xFFA500 }); // Laranja
+    const head_material = new THREE.MeshPhongMaterial({ color: fox_pur}); // Laranja
     const head = new THREE.Mesh(head_geometry, head_material);
     head.name = "fox_head";
     head.castShadow = true;
@@ -178,7 +190,7 @@ function createFox() {
 
     //Face inferior
     const lower_face_geometry = new THREE.SphereGeometry(1.56);
-    const lower_face_material = new THREE.MeshPhongMaterial({ color: 0xFFFFFF}); // Laranja
+    const lower_face_material = new THREE.MeshPhongMaterial({ color: 0xFFFFFF});
     const lower_face = new THREE.Mesh(lower_face_geometry, lower_face_material);
     lower_face.name = "fox_lower_face";
     lower_face.castShadow = true;
@@ -212,7 +224,7 @@ function createFox() {
 
     //Focinho da raposa
     const snout_geometry = new THREE.CylinderGeometry(0.5, 0.5, 3.5);
-    const snout_material = new THREE.MeshPhongMaterial({ color: 0xFFA500 }); // Preto
+    const snout_material = new THREE.MeshPhongMaterial({ color: fox_pur}); // Preto
     const snout = new THREE.Mesh(snout_geometry, snout_material);
     snout.name = "fox_snout";
     snout.castShadow = true;
@@ -227,7 +239,7 @@ function createFox() {
 
     // Orelhas da raposa
     const left_ear_geometry = new THREE.BoxGeometry(0.8, 1.5, 0.8);
-    const left_ear_material = new THREE.MeshPhongMaterial({ color: 0xFFA500 }); // Laranja
+    const left_ear_material = new THREE.MeshPhongMaterial({ color: fox_pur}); // Laranja
     const left_ear = new THREE.Mesh(left_ear_geometry, left_ear_material);
     left_ear.name = "fox_left_ear";
     left_ear.castShadow = true;
@@ -243,14 +255,14 @@ function createFox() {
 
     //Corpo da raposa
     const body_geometry = new THREE.CapsuleGeometry(2.2, 3.2);
-    const body_material = new THREE.MeshPhongMaterial({ color: 0xFFA500 }); // Laranja
+    const body_material = new THREE.MeshPhongMaterial({ color: fox_pur}); // Laranja
     const body = new THREE.Mesh(body_geometry, body_material);
     body.name = "fox_body";
     body.castShadow = true;
 
     //Cauda da raposa
     const tail_geometry = new THREE.CylinderGeometry(0.7, 0, 4);
-    const tail_material = new THREE.MeshPhongMaterial({ color: 0xFFA500 }); // Laranja
+    const tail_material = new THREE.MeshPhongMaterial({ color: fox_pur}); // Laranja
     const tail = new THREE.Mesh(tail_geometry, tail_material);
     tail.name = "fox_tail";
     tail.castShadow = true;
@@ -265,7 +277,7 @@ function createFox() {
 
     //Pernas da raposa
     const front_left_leg_geometry = new THREE.CylinderGeometry(0.5, 0.5, 2);
-    const front_left_leg_material = new THREE.MeshPhongMaterial({ color: 0xFFA500 }); // Laranja
+    const front_left_leg_material = new THREE.MeshPhongMaterial({ color: fox_pur}); // Laranja
     const front_left_leg = new THREE.Mesh(front_left_leg_geometry, front_left_leg_material);
     front_left_leg.name = "fox_front_left_leg";
     front_left_leg.castShadow = true;

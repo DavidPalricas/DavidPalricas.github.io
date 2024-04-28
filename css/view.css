@@ -38,7 +38,7 @@ body {
     border: none;
     background-color: transparent;
     color: #EE0000; /* Vermelho */
-    opacity: 0.1;
+    opacity: 0.5;
     cursor: pointer;
 }
 
@@ -63,13 +63,16 @@ body {
 .level-button{
     width: 100px;
     height: 100px;
-    border-radius: 5 px;
+    border-radius: 10px;
     background-color: #EE0000; /* Vermelho */
+    text-shadow: 2px 1px #191C1F; /* Sombra preta */
     color: white;
     font-size: 20px;
     cursor: pointer;
-    border: 5 px solid  black;
+    border: 3px solid black;
 }
+
+
 
 
 .level-button:hover{
@@ -80,6 +83,14 @@ body {
 }
 
 #level2{
+    opacity: 0.5;
+}
+
+#level3{
+    opacity: 0.5;
+}
+
+#level4{
     opacity: 0.5;
 }
 
@@ -108,8 +119,116 @@ body {
 }
 
 
-label {
+.progress-bar-container label {
     font-size: 20px;
     animation: 1s blink infinite;
    
 }
+
+
+#ambient-modes{
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    align-items: center;
+    top: 10%;
+    right: 10%;
+    gap : 50px;
+
+}
+
+.toggle-ambient-mode{
+    display: flex ;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+   
+
+}
+
+#rain-snow{
+    opacity: 0;
+}
+
+
+
+
+
+
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+ 
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: black;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+
+
+  
+  input:checked + .slider {
+    background-color: #EE0000;;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #EE0000;;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+
+
+  #moon{
+    opacity: 0.5;
+  }
+
+  #rain{
+    opacity: 0.5;
+  }
+
+  
+
