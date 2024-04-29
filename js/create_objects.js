@@ -85,7 +85,7 @@ function createTable(level,n_bullets,mode){
     for (let i = 0; i < n_bullets;i++) {
         const bullet = createBullet();
 
-        bullet.scale.set(0.4,0.4,0.4);
+        bullet.scale.set(0.2,0.2,0.2);
         
     
         bullet.position.set(body.position.x + 4,body.position.y + 0.9, body.position.z - 1.5 + 0.5 *i);
