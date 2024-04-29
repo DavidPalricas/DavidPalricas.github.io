@@ -16,6 +16,11 @@ export function createObjects(model,level,n_bullets,mode){
         case "house":
             model = createHouse();
             break;
+
+
+        case "bullet":
+            model = createBullet();
+            break;
     
         default:
             break;
@@ -357,18 +362,37 @@ function createHouse(){
     const door_material = new THREE.MeshPhongMaterial({ color: 0x8B4513 }); // Castanho escuro
     const door = new THREE.Mesh(door_geometry, door_material);
 
+    const door_handle_geometry = new THREE.SphereGeometry(1);
+    const door_handle_material = new THREE.MeshPhongMaterial({ color: 0x000000 }); // Preto
+    const door_handle = new THREE.Mesh(door_handle_geometry, door_handle_material);
+
+    const lef_window_geometry = new THREE.BoxGeometry(7,10,7);
+    const left_window_material = new THREE.MeshPhongMaterial({color:0XB0E0E6,});
+    const left_window = new THREE.Mesh(lef_window_geometry,left_window_material);
+    
+    const right_window = left_window.clone();
+
+    
+
     roof.position.set(body.position.x, body.position.y + 40, body.position.z);
     roof.rotation.y = 0.25 * Math.PI;
 
     door.position.set(body.position.x - 30, body.position.y - 10, body.position.z );
     door.rotation.y = 0.5 *Math.PI;
 
-
     door.castShadow = true;
 
 
+    left_window.position.set(body.position.x -27,body.position.y +20,body.position.z + 15);
+    right_window.position.set(left_window.position.x ,left_window.position.y,-left_window.position.z);
+    
+    door_handle.position.set(door.position.x +26, door.position.y +26, door.position.z );
+
     const house = new THREE.Group();
+    door.add(door_handle);
     body.add(door);
+    body.add(left_window);
+    body.add(right_window);
     house.add(body);
     house.add(roof);
     return house;

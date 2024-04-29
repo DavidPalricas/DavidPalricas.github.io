@@ -572,6 +572,9 @@ function Grab_Gun() {
 
     createTimer();
 
+    
+    
+
     var element = document.getElementById("instruction");
     element.parentNode.removeChild(element)
 
@@ -600,9 +603,11 @@ function Grab_Gun() {
 }
 
 function fire_gun(event) {
-    if (n_bullets > 0 && gun_grabbed == true) {
+    const revolver = sceneElements.sceneGraph.getObjectByName("revolver");
+    if (n_bullets > 0 && gun_grabbed == true && revolver != undefined) {
         shoot();
-         
+
+
         const audioLoader = new THREE.AudioLoader();
         audioLoader.load( '../sounds/revolver_shot.mp3', function( buffer ) {
             const sound = helper.sound;
@@ -611,6 +616,8 @@ function fire_gun(event) {
             sound.setVolume( 0.5 );
             sound.play();
         });
+
+         
 
         
         if (!cheatcodes["draw"]) {
@@ -623,12 +630,42 @@ function fire_gun(event) {
            
         
             n_bullets--;
+
+
+       
+      
+
         
             //Atualizar o número de balas no ecrã
             bullet.innerHTML = "X" + n_bullets;
     
             
         }
+
+
+        const bullet_fired = createObjects("bullet",level, n_bullets,mode);
+
+        bullet_fired.scale.set(0.2, 0.2, 0.2);
+        bullet_fired.rotation.z = -0.5 * Math.PI;
+        bullet_fired.name = "bullet_fired"
+
+        const gun_fire_effect = new THREE.PointLight(0xFFA500, 50, 10);
+        gun_fire_effect.decay = 2;
+        gun_fire_effect.castShadow = true;
+        gun_fire_effect.name = "gun_fire_effect";
+
+        bullet_fired.position.set(revolver.position.x + 3, revolver.position.y + 0.8, revolver.position.z);
+        gun_fire_effect.position.set(bullet_fired.position.x-0.5, bullet_fired.position.y, bullet_fired.position.z);
+
+        bullet_fired.add(gun_fire_effect);
+        sceneElements.sceneGraph.add(bullet_fired);
+    
+    
+    
+        setTimeout(function() {
+            sceneElements.sceneGraph.remove(bullet_fired);
+            
+        }, 200);
 
        
 
