@@ -13,6 +13,12 @@ body {
     100% {opacity: 1;}
   }
 
+@keyframes shot {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(-50px); }
+    100% { transform: translateX(0); }
+  }
+
 
 #back-button{
     position: absolute;
@@ -88,7 +94,7 @@ body {
 }
 
 
-#animals_count{
+#targets_count{
     position: absolute;
     top: 87%;
     left: 9%;
@@ -147,6 +153,15 @@ label {
     position: absolute;
     top: 12%;
     right: 9%;
+}
+
+#Health{
+    position: absolute;
+    top: 5%;
+    left: 42%;
+    font-size: 30px;
+    opacity: 0;
+    font-size: 40px;
 }
 
 

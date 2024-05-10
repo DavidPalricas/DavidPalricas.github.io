@@ -6,6 +6,7 @@ import { create_Animal_Model } from "./create_animals.js";
 import { create_Env_models } from "./create_env_elements.js";
 import { createObjects } from "./create_objects.js";
 import { createMesh } from "./get_texture.js";
+import { create_Enemy } from "./create_enemy.js";
 
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
@@ -20,9 +21,15 @@ let level = 1;
 let time = 30;
 const mode = "view"
 
-const ANIMALS_LEVEL = [];
+const TARGETS_LEVEL = [];
 
-let animals_count;
+
+let TARGETS = [];
+
+
+let targets_count;
+
+
 
 
 const sceneElements = {
@@ -146,162 +153,184 @@ const scene = {
     load3DObjects: function(sceneGraph) {
       
      
-       const LEVEL = MAP[level-1];
-       const BULLETS = LEVEL[0]
-       const ENV_ELEMENTS = LEVEL[1];
-       const ANIMALS = LEVEL[2];
+        const LEVEL = MAP[level-1];
        
-       n_bullets = BULLETS[0]["bullets"];
-
-        let tree_id = 0;
-        let rock_id = 0;
-        let bush_id = 0;
-        let cactus_id = 0;
-        let scale = 0;
+        const BULLETS = LEVEL[0]
+        const ENV_ELEMENTS = LEVEL[1];
+ 
+ 
+ 
+        TARGETS = LEVEL[2];
         
-         //Adicionar elementos ao ambiente
-         for(let i = 0; i < ENV_ELEMENTS.length; i++){
-            const element = ENV_ELEMENTS[i];
-            const element_name = Object.keys(element)[0];
-            const element_pos = element[element_name];
-
-            let element_model = null;
-
-            switch (element_name) {
-                case "plane":
-                    element_model = create_Env_models(element_name,level);
-                    break;
-                case "tree":
-                    element_model = create_Env_models(element_name,level);
-                    element_model.name = "tree" + tree_id;
-                    tree_id++;
-                    break;
-                case "rock":
-                    element_model = create_Env_models(element_name,level);
-                    element_model.name = "rock" + rock_id;
-                    rock_id++;
-                    break;
-                case "lake":
-                    element_model = create_Env_models(element_name);
-                    element_model.scale.set(2, 2, 2);
-                    break;
-                case "bush":
-                    element_model = create_Env_models(element_name,level);
-                    element_model.name = "bush" + bush_id;
-                    bush_id++;
-                    break;
-
-                case "cactus":
-                    element_model = create_Env_models(element_name);
-                    element_model.name = "cactus" + cactus_id;
-                    cactus_id++;
-                    break;
-                
-
-                default:
-                    break;
-            }
-
-               //Modar a escla dos elementos repetidos
-            if (element.hasOwnProperty("scale")) {
-                scale = element["scale"];
-                element_model.scale.set(scale, scale, scale);
-            }
-
+       
+     
+ 
+ 
+        n_bullets = BULLETS[0]["bullets"];
+ 
+ 
+         
+         let tree_id = 0;
+         let rock_id = 0;
+         let bush_id = 0;
+         let cactus_id = 0;
+         let scale = 0;
+          //Adicionar elementos ao ambiente
+          for(let i = 0; i < ENV_ELEMENTS.length; i++){
+             const element = ENV_ELEMENTS[i];
+             const element_name = Object.keys(element)[0];
+             const element_pos = element[element_name];
+ 
+             let element_model = null;
+ 
+             switch (element_name) {
+                 case "plane":
+                     element_model = create_Env_models(element_name,level);
+                     break;
+                 case "tree":
+                     element_model = create_Env_models(element_name,level);
+                     element_model.name = "tree" + tree_id;
+                     tree_id++;
+                     break;
+                 case "rock":
+                     element_model = create_Env_models(element_name,level);
+                     element_model.name = "rock" + rock_id;
+                     rock_id++;
+                     break;
+                 case "lake":
+                     element_model = create_Env_models(element_name);
+                     element_model.scale.set(2, 2, 2);
+                     break;
+                 case "bush":
+                     element_model = create_Env_models(element_name,level);
+                     element_model.name = "bush" + bush_id;
+                     bush_id++;
+                     break;
+ 
+                 case "cactus":
+                     element_model = create_Env_models(element_name);
+                     element_model.name = "cactus" + cactus_id;
+                     cactus_id++;
+                     break;
+ 
+                        
+     
+                 default:
+                      break;
+             }
+ 
+                //Modar a escla dos elementos repetidos
+             if (element.hasOwnProperty("scale")) {
+                 scale = element["scale"];
+                 element_model.scale.set(scale, scale, scale);
+             }
+ 
+             element_model.position.set(element_pos[0], element_pos[1], element_pos[2]);
+             sceneGraph.add(element_model);
+ 
+ 
+ 
+ 
             
-            
-
-            element_model.position.set(element_pos[0], element_pos[1], element_pos[2]);
-            sceneGraph.add(element_model);
-
-
-
-
-         }
-
-        
-
-        let duck_id = 1;
-        let fox_id = 1;
-        let boar_id = 1;
-        let vulture_id = 1;
-        let coyote_id = 1;
-        
-        animals_count = ANIMALS.length;
-           //Adicionar animais á cena
-       for(let i = 0; i < animals_count; i++){
-              const animal = ANIMALS[i];
-              const animal_name = Object.keys(animal)[0];
-              const animal_pos = animal[animal_name];
-    
-              let animal_model = null;
-
-
-              switch (animal_name) {
-                case "duck":
-                    animal_model = create_Animal_Model(animal_name);
-                    animal_model.scale.set(0.6, 0.6, 0.6);
-                    animal_model.rotation.y = -0.5 * Math.PI;
-                    animal_model.name = animal_name + duck_id;
-                    duck_id++;
-                    break;
-                case "fox":
-                    animal_model = create_Animal_Model(animal_name,level);
-                    animal_model.rotation.y = 0.5 *Math.PI;
-                    animal_model.name = animal_name + fox_id;
-                    fox_id++;
-                    break;
-
-                case "boar":
-                    animal_model = create_Animal_Model(animal_name);
-                    animal_model.rotation.y = 0.5 * Math.PI;
-                    animal_model.name = animal_name + boar_id;
-                    boar_id++;
-    
-                    break;
-
-                case "vulture":
-                    animal_model = create_Animal_Model(animal_name);
-                    animal_model.rotation.y = 0.5 * Math.PI;
-                    animal_model.name = animal_name + vulture_id;
-                    vulture_id++;
-                    break;
-
-                case "coyote":
-                    animal_model = create_Animal_Model(animal_name);
-                    animal_model.rotation.y = 0.5 * Math.PI;
-                    animal_model.name = animal_name + coyote_id;
-                    coyote_id++;
-                
-                    break;
-
-
-              }
-    
-          
-    
-            animal_model.position.set(animal_pos[0], animal_pos[1], animal_pos[2]);
-            animal_model.initial_pos = animal_pos[2];
-            sceneGraph.add(animal_model);
-        
-
-            ANIMALS_LEVEL.push(animal_model.name);
-            
-           
-       }
+ 
+ 
+          }
+         
+       
+         targets_count = TARGETS.length;
+ 
    
-        const table = createObjects("table",level, n_bullets,mode);
-        sceneGraph.add(table);
+        
+     
+         let duck_id = 1;
+         let fox_id = 1;
+         let boar_id = 1;
+         let vulture_id = 1;
+         let coyote_id = 1;
+         let enemy_id = 1;
+         //Adicionar animais á cena
+         for(let i = 0; i < targets_count; i++){
+             const target = TARGETS[i];
+             const target_name = Object.keys(target)[0];
+             const target_pos = target[target_name];
+   
+             let target_model = null;
+ 
+ 
+             switch (target_name) {
+               case "duck":
+                   target_model = create_Animal_Model(target_name);
+                   target_model.scale.set(0.6, 0.6, 0.6);
+                   target_model.rotation.y = -0.5 * Math.PI;
+                   target_model.name = target_name + duck_id;
+                   duck_id++;
+                   break;
+               case "fox":
+                   target_model = create_Animal_Model(target_name,level);
+                   target_model.rotation.y = 0.5 *Math.PI;
+                   target_model.name = target_name + fox_id;
+                   fox_id++;
+                   break;
+ 
+               case "boar":
+                   target_model = create_Animal_Model(target_name);
+                   target_model.rotation.y = 0.5 * Math.PI;
+                   target_model.name = target_name + boar_id;
+                   boar_id++;
+   
+                   break;
+ 
+               case "vulture":
+                   target_model = create_Animal_Model(target_name);
+                   target_model.rotation.y = 0.5 * Math.PI;
+                   target_model.name = target_name + vulture_id;
+                   vulture_id++;
+                   break;
+ 
+               case "coyote":
+                   target_model = create_Animal_Model(target_name);
+                   target_model.rotation.y = 0.5 * Math.PI;
+                   target_model.name = target_name + coyote_id;
+                   coyote_id++;
+           
+                   break;
+ 
+             case "enemy":
+                 target_model = create_Enemy();
+                 target_model.name = target_name + enemy_id;
+                 enemy_id++;
+                 break;
+                  
+             }
+   
+         
+           
+           if (target.hasOwnProperty("rotation")) {
+                target_model.rotation.y = target["rotation"];
+            }
+           target_model.position.set(target_pos[0], target_pos[1], target_pos[2]);
+           target_model.initial_pos = target_pos[2];
+           sceneGraph.add(target_model);
+       
+ 
+           TARGETS_LEVEL.push(target_model.name);
+          
+ 
+ 
+ 
+      }
+               
+           
+     const table = createObjects("table",level, n_bullets,mode);
+     sceneGraph.add(table);
 
-
-        if (level == 4) {
-            const house = createObjects("house",level, n_bullets,mode);
-            house.position.set(200, 0, 0);
-            sceneGraph.add(house);
-            
-        }
-
+     if (level== 4) {
+        const house = createObjects("house",level, n_bullets,mode);
+        house.position.set(200, 0, 0);
+        sceneGraph.add(house);
     }
+}
+ 
 };
 
 var delta = 0;
@@ -310,24 +339,31 @@ function computeFrame(time) {
     delta += 0.08;
 
     helper.controls.update();
-  
-    ANIMALS_LEVEL.forEach(animal => {
+
+
+    if (level != 4) {
+        TARGETS_LEVEL.forEach(animal => {
         const animal_model = sceneElements.sceneGraph.getObjectByName(animal);
-       
+           
         if (animal_model != undefined  ) {
             animate_animal(animal_model,delta);
         }
+            
+        });
         
-    });
+    }
+  
+
    
 
 
 
     if ( israin && (level == 2 || level == 3)){
         for (let i = 0; i < rain.length; i++) {
-            // Mova o floco de neve para baixo
-            rain[i].position.y -= 0.5; // Altere a velocidade de queda ajustando este valor
-            // Se o floco de neve atingir o chão, coloque-o de volta no topo
+            
+            level == 2 ? rain[i].position.y -= 1 : rain[i].position.y -= 0.5; // Altere a velocidade de queda ajustando este valor
+            
+            // Se o floco de neve/ pingo de chuva colidir com o chão, ele "cai" novamente do céu
             if (rain[i].position.y < -10) {
                 rain[i].position.y = 20;
             }
@@ -582,7 +618,7 @@ function Change_Level(){
     let elements_remove = [];
 
     //Limpar o array de animais do nível anterior
-    ANIMALS_LEVEL.length = 0;
+    TARGETS_LEVEL.length = 0;
 
 
     rain.length = 0;

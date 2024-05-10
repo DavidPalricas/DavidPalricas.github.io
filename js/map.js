@@ -1,7 +1,7 @@
 let CONFIG = [{"bullets": 8}]
 
 
-let ANIMALS = [{"boar":[300, 0, 200]},
+let TARGETS = [{"boar":[300, 0, 200]},
            {"vulture":[50, 25, -100]},
            {"coyote":[70, 0, 0]},];
 
@@ -49,7 +49,7 @@ let ENV_OBJECTS  = [    {"plane":[15, 0, 0]},
 
 
 
-const LEVEL1 = [CONFIG,ENV_OBJECTS, ANIMALS];
+const LEVEL1 = [CONFIG,ENV_OBJECTS, TARGETS];
 
 
 
@@ -96,7 +96,7 @@ ENV_OBJECTS = [ {"plane":[15, 0, 0]},
                     {"rock": [280,0,-0], "scale": 4},
                     {"bush": [10,0,-100],"scale":2},];
 
-ANIMALS= [{"duck":[50,30, 0]},
+TARGETS= [{"duck":[50,30, 0]},
                 {"fox":[120, 0, 50]},
                 {"boar":[300, 0, -150]},
                 {"duck":[40, 30, 170]},];
@@ -105,7 +105,7 @@ ANIMALS= [{"duck":[50,30, 0]},
 
 CONFIG = [{"bullets": 6}]
 
-const LEVEL2 = [CONFIG,ENV_OBJECTS, ANIMALS];
+const LEVEL2 = [CONFIG,ENV_OBJECTS, TARGETS];
 
 ENV_OBJECTS = [ {"plane":[15, 0, 0]},
                     {"tree":[310, 0, 80],"scale":1.2},
@@ -150,7 +150,7 @@ ENV_OBJECTS = [ {"plane":[15, 0, 0]},
 
 
 
-const LEVEL3 = [CONFIG,ENV_OBJECTS, ANIMALS];
+const LEVEL3 = [CONFIG,ENV_OBJECTS, TARGETS];
 
 
 
@@ -170,7 +170,7 @@ const LEVEL3 = [CONFIG,ENV_OBJECTS, ANIMALS];
                     {"cactus":[300, 0, 20],"scale":1.5},
                     {"rock":[290, 0, 50],"scale":1.5},
                     {"rock":[60, 0, -30],"scale":1.3},
-                    {"rock" : [50,0,20],"scale":3},
+                    {"rock" : [50,0,20],"scale":2},
                     {"cactus" : [60,0,60],"scale":2},
                     {"rock" : [50,0,-50],"scale":2},
                     {"cactus" : [60,0,-90],"scale":1.5},
@@ -193,8 +193,23 @@ const LEVEL3 = [CONFIG,ENV_OBJECTS, ANIMALS];
 
 
 
+TARGETS = [{"enemy": [100,0,0]},
+                 {"enemy": [200,0,120],"rotation": 0.82 * Math.PI},
+                 {"enemy": [120,0,-40],"rotation": 3.3 *Math.PI/3},
+                 {"enemy": [150,0,30],"rotation":Math.PI - 0.2},
+                 {"enemy": [70,0,-100],"rotation":4 *Math.PI/3},
+                 {"enemy": [20,0,150],"rotation":Math.PI/2 + 0.1},
+            
 
-const LEVEL4 = [CONFIG,ENV_OBJECTS, ANIMALS];
+];
+
+
+CONFIG = [{"bullets": 8}]
+
+
+
+
+const LEVEL4 = [CONFIG,ENV_OBJECTS, TARGETS];
 
 
 export const MAP = [LEVEL1,LEVEL2,LEVEL3,LEVEL4];

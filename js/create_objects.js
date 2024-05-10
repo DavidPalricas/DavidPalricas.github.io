@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 
-export function createObjects(model,level,n_bullets,mode){
+export function createObjects(model,level,n_bullets,mode,tag){
     switch (model) {
         case "table":
             model = createTable(level,n_bullets,mode);
@@ -9,7 +9,7 @@ export function createObjects(model,level,n_bullets,mode){
             break;
 
         case "revolver":
-              model = createRevolver();
+              model = createRevolver(tag);
                 break;
 
 
@@ -21,6 +21,10 @@ export function createObjects(model,level,n_bullets,mode){
         case "bullet":
             model = createBullet();
             break;
+
+        case "hat":
+              model = create_Cowboy_Hat(tag);
+              break;
     
         default:
             break;
@@ -132,11 +136,21 @@ function createTable(level,n_bullets,mode){
 }
 
 
-function createRevolver() {
+function createRevolver(tag) {
+    let grip_color;
+    let revolver_color;
+    
+
+    if(tag == "enemy"){
+        grip_color = 0xFFFFFF; //Branco
+        revolver_color = 0xE5B80B; //Dourado
+        
+    }
+    else{
+        grip_color = 0x000000; //Preto
+        revolver_color = "rgb(89.6,89.6,89.6)"; //Prateado  ambiente brilhante
+    }
   
-    let grip_color = 0x000000; //Preto
-    let revolver_color = "rgb(89.6,89.6,89.6)"; //Prateado  ambiente brilhante
- 
 
 
     //Punho do revolver
@@ -249,9 +263,16 @@ function createBullet() {
 
 
 
-function create_Cowboy_Hat(){
+function create_Cowboy_Hat(tag){
 
-    const hat_color = 0x654321;
+    let hat_color;
+    
+    if(tag == "enemy"){
+        hat_color = 0x800000; //Vermelho Escuro
+        
+    }else{
+        hat_color = 0x654321;
+    }
 
     //Parte de baixo do chapéu
     const bottom_geometry = new THREE.CylinderGeometry(2, 3, 0.5, 32);
