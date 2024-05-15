@@ -156,6 +156,10 @@ const helper = {
         const music = new THREE.Audio( music_listener );
     
         helper.music = music; // Adicionar a música ao helper
+
+
+        const ambient_sound = new THREE.Audio( listener );
+        helper.ambient_sound = ambient_sound;
        
   
 
@@ -460,6 +464,8 @@ function computeFrame(time) {
                 rain[i].position.y = 20;
             }
         }
+
+        
     }
 
  
@@ -1169,9 +1175,13 @@ function animate_animal(animal,delta){
 
 
 function Change_Level(){
+    if(israin && level== 3 ){
+        helper.ambient_sound.stop();
+    
+    }
     level_text.innerHTML = "Level: " + level;
 
-    console.log("Level: " + level);
+
 
 
     let elements_remove = []; 
@@ -1366,12 +1376,28 @@ function Cheatcodes(cheatcode){
 
 function switch_rain_snow(){
     if (!israin ) {
+        if (level == 2) {
+            const audioLoader = new THREE.AudioLoader();
+            audioLoader.load( '../sounds/rain.mp3', function( buffer ) {
+                const sound = helper.ambient_sound;
+                sound.setBuffer( buffer );
+                sound.setLoop( true );
+                sound.setVolume( 1.2 );
+                sound.play();
+            });
+
+        }
+      
 
             create_Rain_Snow();
             israin = true;
 
 
     }else{
+        if (level == 2) {
+            helper.ambient_sound.stop();
+        }
+      
         if (night) {
             sceneElements.renderer.setClearColor(0x000000 , 1.0);
             
