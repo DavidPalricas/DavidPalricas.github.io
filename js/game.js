@@ -101,6 +101,7 @@ const helper = {
         ambient_light.decay = 1;
         sceneElements.sceneGraph.add(ambient_light);
         ambient_light.castShadow = true;
+       
 
         ambient_light.name = "ambient_light";
 
@@ -850,13 +851,7 @@ function shoot(){
 function End_game(){
     //Parar a música de fundo
 
-    if(helper.music.isPlaying){
-        helper.music.stop();
-        helper.sound.stop();
-        helper.target_death_sound.stop();
-       
-    }
-
+    stop_sound_effects();
     
 
 
@@ -952,6 +947,7 @@ function End_game(){
 
 
 function Game_Over(){
+    stop_sound_effects("game-over");
     game_over_theme();
     const body = document.body;
 
@@ -1033,11 +1029,6 @@ function Game_Over(){
 
 
 function game_over_theme(){
-    //Para a música de fundo
-    if(helper.music.isPlaying){
-        helper.music.stop();
-    }
-
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load( "../sounds/game_over.mp3", function( buffer ) {
         const sound = helper.music;
@@ -1217,31 +1208,26 @@ function Change_Level(){
 
 function move_Revoler(){
     const revolver = sceneElements.sceneGraph.getObjectByName("revolver");
+    revolver.position.x = 20;
+    revolver.position.y = 8;
+    
     
     raycaster.setFromCamera(mouse, sceneElements.camera);
     let intersects = raycaster.intersectObjects(sceneElements.sceneGraph.children, true);
     
     //Se estiver vários objetos a frente do revolver, este segue o primeiro
+    
     if (intersects.length > 0) {
-        revolver.position.set(15, intersects[0].point.y, intersects[0].point.z);
+        revolver.position.z = intersects[0].point.z;
         
-            //Limites das posições do revolver
-
-            if (intersects[0].point.y > 14) {
-                revolver.position.y = 14;
-                
-            }
-            else if (intersects[0].point.y < 8) {
-                revolver.position.y = 8;
-            }
-
-
-            if (intersects[0].point.z < -50) {
+            if (intersects[0].point.z < -40) {
                 revolver.position.z = -40;
             }
-            else if (intersects[0].point.z > 50) {
+          
+            else if (intersects[0].point.z > 40) {
                 revolver.position.z = 40;
             }
+            
     }
 }
 
@@ -1607,11 +1593,34 @@ function createTextbox(){
         
     }, 6000);
 
-    
-   
-    
+}
 
 
+
+
+function stop_sound_effects(tag){
+    
+  
+    if(helper.music.isPlaying){
+        helper.music.stop();
+    }
+    
+
+    delete helper.target_death_sound;
+    delete helper.ambient_sound;
+    delete helper.sound;
+    
+
+ 
+
+    if (level == 4 && tag=="game-over") {
+        sceneElements.sceneGraph.children.forEach(function(child) {
+            if (child.name.includes("enemy")){
+                delete child.shoot_sound; //Remove o som do tiro do iniimigo
+               
+            }
+            });    
+    }
 }
 
 init();
