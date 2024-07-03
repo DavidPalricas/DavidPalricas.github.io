@@ -2,29 +2,39 @@
 
 <html lang="en">
 
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title> Wild Gunslinger </title>
-    <link rel="icon" href="img/favicon.png" type="image/png">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
-  
+    <title> David Palricas's Portofolio </title>
 
- 
+    <link rel="stylesheet" href="css/style.css">
+     
+    <!--Fonte Star Wars -->
+    <link href="https://fonts.cdnfonts.com/css/star-wars" rel="stylesheet">
+                
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://threejs.org/build/three.module.js",
+            "three/addons/": "https://threejs.org/examples/jsm/"
+          }
+        }
+      </script>
+
+    <script type="module" src="js/main.js"></script>
 
 </head>
 
 <body>
-    <h1 id="title">Wild Gunslinger</h1>
-    <div id="buttons">
-        <button id="playgame" onclick="location.href='game.html';">Play Game</button>
-        <button id="View MAP" onclick="location.href='view.html';">View Map</button>
-        <button id="controls" onclick="location.href='controls.html';">How to Play?</button>
-        <button id ="demo" onclick="location.href='https://youtu.be/3oYhQ_FzjzU'">Demo</button>
-        <button id="code" onclick="location.href='https://github.com/DavidPalricas/Wild_Gunslinger'">Source Code</button>
+    <div id="Tag3DScene"> </div>
 
-    </div>
+  <div class = "progress-bar-container">
+    <label for="progress-bar"> Loading ... </label>
+    <progress id="progress-bar" value="0" max="100"></progress>
+  </div>
 
 </body>
 

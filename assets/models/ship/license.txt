@@ -1,0 +1,11 @@
+Model Information:
+* title:	Anakin's Jedi Starfighter - Star Wars
+* source:	https://sketchfab.com/3d-models/anakins-jedi-starfighter-star-wars-27c14b58ffd343edabea8bea7b595005
+* author:	Quiznos323 (https://sketchfab.com/quiznos323)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Anakin's Jedi Starfighter - Star Wars" (https://sketchfab.com/3d-models/anakins-jedi-starfighter-star-wars-27c14b58ffd343edabea8bea7b595005) by Quiznos323 (https://sketchfab.com/quiznos323) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
