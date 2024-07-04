@@ -35,3 +35,66 @@ label{
     font-size: 2rem;
 
 }
+
+
+
+.keys{
+    font-family: 'Star Wars', sans-serif;
+    color: yellow;
+    width: 100px;
+    height: 100px; 
+    background-color: black;
+    border: 2px solid yellow;
+    display: none;
+    opacity: 0.5;
+  
+   
+}
+
+
+
+#up{
+    position: absolute;
+    top : 70%;
+    left: 10%;
+   
+}
+
+
+#down{
+    position: absolute;
+    top : 85%;
+    left: 10%;
+    
+}
+
+#left{
+    position: absolute;
+    top : 85%;
+    left: 3%;
+    
+}
+
+#right{
+    position: absolute;
+    top : 85%;
+    left: 17%;
+    
+}
+
+
+#turbo{
+    position: absolute;
+    top : 85%;
+    left: 90%;
+    
+}
+
+#rotate{
+    position: absolute;
+    top : 85%;
+    left: 80%;
+    
+}   
+
+

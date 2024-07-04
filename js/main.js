@@ -207,10 +207,15 @@ document.addEventListener('keydown', function(event) {
     if (enter_pressed && !player_stop) {
         switch (event.keyCode) {
             case 87: // W
-            player.position.y = Math.min(player.position.y + playerSpeed, maxY); // Subir
-            break;
+
+                const up_key = document.getElementById("up");
+                up_key.style.opacity = 1;
+                player.position.y = Math.min(player.position.y + playerSpeed, maxY); // Subir
+                break;
             
             case 68: // D
+                const right_key = document.getElementById("right");
+                right_key.style.opacity = 1;
                 // Limita a movimentação para a direita dentro dos limites minX e maxX
                 const newXD = player.position.x + playerSpeed;
                 if (newXD <= maxX) {
@@ -222,6 +227,8 @@ document.addEventListener('keydown', function(event) {
                 right = true;
                 break;
             case 65: // A
+                const left_key = document.getElementById("left");
+                left_key.style.opacity = 1;
                 // Limita a movimentação para a esquerda dentro dos limites minX e maxX
                 const newXA = player.position.x - playerSpeed;
                 if (newXA >= minX) {
@@ -233,16 +240,22 @@ document.addEventListener('keydown', function(event) {
                 left = true;
                 break;
             case 83: // S
+                const down_key = document.getElementById("down");
+                down_key.style.opacity = 1;
                 player.position.y = Math.max(player.position.y - playerSpeed, minY);
                 break;
 
-            case 82:
+            case 82: // R
+                 const rotate_key = document.getElementById("rotate");
+                 rotate_key.style.opacity = 1;
                   backwards = !backwards;
              
                  player.rotation.set(-player.rotation.x, -player.rotation.y, -player.rotation.z);
                  sceneElements.camera.position.set(-sceneElements.camera.position.x, -sceneElements.camera.position.y, -sceneElements.camera.position.z);
                 break;
             case 16: // Shift
+                const turbo_key = document.getElementById("turbo");
+                turbo_key.style.opacity = 1;
                 player.position.x += playerSpeed * 2;
                 turbo_effect = 10;
                 break;
@@ -268,9 +281,44 @@ document.addEventListener('keydown', function(event) {
 
 
 document.addEventListener('keyup', function(event) {
-    if (event.keyCode === 16) {
-        turbo = 0;
-    }
+   switch (event.keyCode) {
+    case 87: // W
+        const up_key = document.getElementById("up");
+        up_key.style.opacity = 0.5;
+        break;
+    case 68: // D
+        const right_key = document.getElementById("right");
+        right_key.style.opacity = 0.5;
+       
+        break;
+
+    case 65: // A
+        const left_key = document.getElementById("left");
+        left_key.style.opacity = 0.5;
+      
+        break;
+
+    case 83: // S
+        const down_key = document.getElementById("down");
+        down_key.style.opacity = 0.5;
+        break;
+
+    case 16: // Shift
+        const turbo_key = document.getElementById("turbo");
+        turbo_key.style.opacity = 0.5;
+        turbo_effect = 0;
+        break;
+
+
+    case 82: // R
+        const rotate_key = document.getElementById("rotate");
+        rotate_key.style.opacity = 0.5;
+        break;
+
+    
+
+
+   }
 });
 
 // Adicione um listener para 'keyup' para suavizar a rotação da nave quando as teclas A ou D são soltas
@@ -390,7 +438,8 @@ function Load_Models(){
                 // Gerenciamento da barra de progresso
     const progress_bar = document.getElementById("progress-bar");
     const progress_bar_container = document.getElementsByClassName("progress-bar-container");
-
+   
+    const keys = document.getElementsByClassName("keys");
 
     Loading_manager.onStart = function (url, itemsLoaded, itemsTotal) {
         console.log('Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
@@ -403,6 +452,9 @@ function Load_Models(){
     Loading_manager.onLoad = function () {
         console.log('Loading complete!');
         progress_bar_container[0].style.display = "none";
+        for (let i = 0; i < keys.length; i++) {
+            keys[i].style.display = "block";
+        }
     }
 
 
