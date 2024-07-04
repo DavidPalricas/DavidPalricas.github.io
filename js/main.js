@@ -50,7 +50,7 @@ const helper = {
         camera.position.set(-80, 20, 0);
 
         camera.near = 0.1;
-        camera.far = 5000;
+        camera.far = 10000;
         camera.updateProjectionMatrix();
       
 
@@ -86,7 +86,7 @@ const scene = {
 
        
         // Criar a galáxia
-        const galaxy_geometry = new THREE.SphereGeometry(1000, 100, 100);
+        const galaxy_geometry = new THREE.SphereGeometry(5000, 100, 100);
         const galaxy_material = new THREE.MeshBasicMaterial({
             map: new THREE.TextureLoader().load('assets/textures/galaxy.png'),
             side: THREE.DoubleSide,
@@ -100,10 +100,11 @@ const scene = {
         const fontloader = new FontLoader();
 
         fontloader.load("assets/fonts/Star_Wars.json", function (font) {
-            const textGeometry = new TextGeometry('         Hello There ! \n Welcome to my Portofolio \n Press Enter to continue', {
+            const textGeometry = new TextGeometry('         Hello There ! \n Welcome to my Portofolio \n Travel to each planet \n to get to know my projects \n\n Press Enter to continue...', {
                 font: font,
-                size: 25,
+                size: 20,
                 height: 4,
+                depth : 1
                
             })
 
@@ -114,7 +115,7 @@ const scene = {
             const textMesh = new THREE.Mesh(textGeometry, textMaterial);
 
             // Posicione o texto na cena
-            textMesh.position.set(100, 0, -300); // Ajuste a posição conforme necessário
+            textMesh.position.set(100, 50, -300); // Ajuste a posição conforme necessário
             textMesh.rotation.y = -Math.PI / 2; 
 
             textMesh.name= "welcome_text"
@@ -375,7 +376,7 @@ function checkDistance(){
 
         
         if ( distance_planet <= distance_to_show_text &&  planet.model.getObjectByName("planet_text") == undefined && exited_planet == null) {
-            console.log("Near to planet -> ", planet);
+           
 
             nearst_planet = planet;
             player_stop = true;
@@ -383,11 +384,14 @@ function checkDistance(){
             const common_text = "Press G to go to the planet or E to continue your journey";
             const fontloader = new FontLoader();
 
+  
+
             fontloader.load("assets/fonts/Star_Wars.json", function (font) {
                 const textGeometry = new TextGeometry( planet.title + "\n"  + planet.desc + "\n\n" + common_text, {
                     font: font,
                     size: 8,
                     height: 2,
+                    depth : 1
                    
                 })
     
@@ -407,8 +411,7 @@ function checkDistance(){
 
                 
                 textMesh.position.set(planet.model.position.x - 100  , planet.model.position.y + 200, planet.model.position.z - 100);
-                console.log(textMesh.position);
-                console.log(planet.model.position);
+
                 sceneElements.sceneGraph.add(textMesh);
 
         });
@@ -441,9 +444,7 @@ function Load_Models(){
    
     const keys = document.getElementsByClassName("keys");
 
-    Loading_manager.onStart = function (url, itemsLoaded, itemsTotal) {
-        console.log('Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
-    };
+  
 
     Loading_manager.onProgress = function (item, loaded, total) {
         progress_bar.value = loaded / total * 100;
@@ -478,7 +479,7 @@ function Load_Player(){
     loader.load("assets/models/ship/scene.gltf", function (gltf) {
         player = gltf.scene;
         player.rotation.y = Math.PI / 2;
-        console.log('Ship loaded successfully');
+     
      
         player.scale.set(0.04, 0.04, 0.04);
         player.position.set(-350, 0, 0);
@@ -504,7 +505,6 @@ function Load_Planets(planet_config){
          
     loader.load(path, function (gltf) {
         gltf.scene.rotation.y = planet_config.rotation;
-        console.log('Planet loaded successfully');
         gltf.scene.position.set(planet_config.pos[0], planet_config.pos[1], planet_config.pos[2]);
         gltf.scene.scale.set(planet_config.scale[0], planet_config.scale[1], planet_config.scale[2]);
         sceneElements.sceneGraph.add(gltf.scene);
