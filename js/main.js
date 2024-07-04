@@ -72,6 +72,15 @@ const helper = {
         htmlElement.appendChild(renderer.domElement);
 
 
+        const listener = new THREE.AudioListener();
+        camera.add(listener);
+
+
+        const music = new THREE.Audio(listener);
+
+        helper.music = music;
+
+
     },
 
     render: function(sceneElements) {
@@ -166,28 +175,14 @@ function computeFrame(time) {
         sceneElements.camera.position.z += (desiredZ - sceneElements.camera.position.z) * lerpRate;
 
         sceneElements.camera.lookAt(player.position);
+      
+
+        Animate_Model("Star Destroyer");
+        Animate_Model("Rayquaza");
 
 
-
-        if (sceneElements.sceneGraph.getObjectByName("Star Destroyer") != undefined) {
-            const star_destroyer = sceneElements.sceneGraph.getObjectByName("Star Destroyer");
-            star_destroyer.position.z -= star_destroyer.speed;
-
-            if (star_destroyer.position.z <= -1000 || star_destroyer.position.z >= 1000) {
-            
-                star_destroyer.rotation.y  = - star_destroyer.rotation.y + Math.PI;
-                star_destroyer.speed = -star_destroyer.speed;
-            }
-            
-        }
+     
     }   
-
-
-    
-  
-        
-
-   
 
     helper.render(sceneElements);
     requestAnimationFrame(computeFrame);
@@ -203,10 +198,10 @@ function computeFrame(time) {
 const playerSpeed = 0.8;
 const rotationSpeed = 0.05;
 const maxRotation = Math.PI / 4; // Limita a rotação máxima para 45 graus
-const maxY = 300; // Exemplo de limite superior para a posição Y
-const minY = -300; // Exemplo de limite inferior para a posição Y
-const minX= -380;
-const maxX= 380;
+const maxY = 5000; // Exemplo de limite superior para a posição Y
+const minY = -5000; // Exemplo de limite inferior para a posição Y
+const minX= -5000;
+const maxX= 5000;
 document.addEventListener('keydown', function(event) {
 
     if (player_stop && nearst_planet != null) {
@@ -291,11 +286,13 @@ document.addEventListener('keydown', function(event) {
         checkDistance();
         
     }else{
-        if (event.keyCode === 13) {
+        if (event.keyCode === 13) { // Enter
             enter_pressed = true;
 
             const welcome_text = sceneElements.sceneGraph.getObjectByName("welcome_text");
             sceneElements.sceneGraph.remove(welcome_text);
+
+            Play_Music();
         }
     
     }
@@ -503,7 +500,7 @@ function Load_Player(){
         player.rotation.y = Math.PI / 2;
      
      
-        player.scale.set(0.04, 0.04, 0.04);
+        player.scale.set(0.035, 0.035, 0.035);
         player.position.set(-350, 0, 0);
         sceneElements.sceneGraph.add(player);
         player.name = "ship";
@@ -544,8 +541,6 @@ function Load_Planets(planet_config){
    
 
 function Load_Objects(object_config){
-
-
     const folder_name = object_config.name.toLowerCase().replace(" ", "_");
     const path = "assets/models/" + folder_name + "/scene.gltf";
 
@@ -554,15 +549,16 @@ function Load_Objects(object_config){
         gltf.scene.position.set(object_config.pos[0], object_config.pos[1], object_config.pos[2]);
         gltf.scene.scale.set(object_config.scale[0], object_config.scale[1], object_config.scale[2]);
         gltf.scene.name = object_config.name;
- 
-        
-        if (object_config.hasOwnProperty("rotate")) {
-            gltf.scene.rotate = object_config.rotate;
-        }
 
         if (object_config.hasOwnProperty("speed") ){
             gltf.scene.speed = object_config.speed;
         }
+
+
+        if (object_config.hasOwnProperty("limit") ){
+            gltf.scene.limit = object_config.limit;
+        }
+
         sceneElements.sceneGraph.add(gltf.scene);
         
      
@@ -573,5 +569,34 @@ function Load_Objects(object_config){
         console.error('An error happened', error);
     });
 }
+
+
+
+function Animate_Model(model_name){
+    const model = sceneElements.sceneGraph.getObjectByName(model_name);
+    if (model != undefined) {
+       model.position.z -= model.speed;
+
+        if (model.position.z <= - model.limit || model.position.z >= model.limit) {
+            model.rotation.y  = - model.rotation.y + Math.PI;
+            model.speed = -model.speed;
+        }
+            
+    }
+       
+    }
+
+
+
+function Play_Music(){
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load("assets/music/gusty_garden.mp3", function(buffer) {
+        helper.music.setBuffer(buffer);
+        helper.music.setLoop(true);
+        helper.music.setVolume(0.05);
+        helper.music.play();
+    });
+}
+
 
 init();

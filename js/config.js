@@ -4,6 +4,9 @@ const PLANETS = [{name : "Wild Gunslinger",pos: [400, -500, -300], rotation: Mat
 
 ];
 
-const OBJECTS = [{name : "Death Star",pos: [600, 100, 200],rotation: -2 * Math.PI / 3, scale: [7.5,7.5,7.5] },
-                 {name : "Star Destroyer",pos: [300, 80, 200],rotation: Math.PI , scale: [0.15,0.15,0.15], speed :0.02 },];
+const OBJECTS = [{name : "Death Star",pos: [600, 100, 200],rotation: -2 * Math.PI / 3, scale: [10,10,10] },
+                 {name : "Star Destroyer",pos: [300, 80, 200],rotation: Math.PI , scale: [0.08,0.08,0.08], speed :0.04,limit : 1000}, 
+                 {name : "Rayquaza",pos: [-800, 0, 0],rotation: Math.PI, scale: [30,30,30],speed :1,limit : 2000}];
+
+
 export const MAP = [PLANETS, OBJECTS]
