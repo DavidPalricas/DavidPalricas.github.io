@@ -11,6 +11,8 @@ let player_stop = false;
 
 
 const planets = [];
+
+
        
 
 const Loading_manager = new THREE.LoadingManager();
@@ -164,7 +166,27 @@ function computeFrame(time) {
         sceneElements.camera.position.z += (desiredZ - sceneElements.camera.position.z) * lerpRate;
 
         sceneElements.camera.lookAt(player.position);
-    }
+
+
+
+        if (sceneElements.sceneGraph.getObjectByName("Star Destroyer") != undefined) {
+            const star_destroyer = sceneElements.sceneGraph.getObjectByName("Star Destroyer");
+            star_destroyer.position.z -= star_destroyer.speed;
+
+            if (star_destroyer.position.z <= -1000 || star_destroyer.position.z >= 1000) {
+            
+                star_destroyer.rotation.y  = - star_destroyer.rotation.y + Math.PI;
+                star_destroyer.speed = -star_destroyer.speed;
+            }
+            
+        }
+    }   
+
+
+    
+  
+        
+
    
 
     helper.render(sceneElements);
@@ -522,6 +544,8 @@ function Load_Planets(planet_config){
    
 
 function Load_Objects(object_config){
+
+
     const folder_name = object_config.name.toLowerCase().replace(" ", "_");
     const path = "assets/models/" + folder_name + "/scene.gltf";
 
@@ -529,8 +553,20 @@ function Load_Objects(object_config){
         gltf.scene.rotation.y = object_config.rotation;
         gltf.scene.position.set(object_config.pos[0], object_config.pos[1], object_config.pos[2]);
         gltf.scene.scale.set(object_config.scale[0], object_config.scale[1], object_config.scale[2]);
-        sceneElements.sceneGraph.add(gltf.scene);
         gltf.scene.name = object_config.name;
+ 
+        
+        if (object_config.hasOwnProperty("rotate")) {
+            gltf.scene.rotate = object_config.rotate;
+        }
+
+        if (object_config.hasOwnProperty("speed") ){
+            gltf.scene.speed = object_config.speed;
+        }
+        sceneElements.sceneGraph.add(gltf.scene);
+        
+     
+     
     }, function (xhr) {
         console.log((xhr.loaded / xhr.total * 100) + '% loaded');
     }, function (error) {
