@@ -1,0 +1,63 @@
+:root {
+  --sw-yellow: #FFE81F;
+  --sw-yellow-glow: rgba(255, 232, 31, 0.6);
+  --glass-bg: rgba(10, 10, 10, 0.7);
+}
+
+.navbar-container {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 3rem;
+  padding: 1rem 3rem;
+  
+  /* Fundo escurecido para maior contraste com o amarelo */
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  
+  border-radius: 50px;
+  /* Borda translúcida para manter o efeito de vidro */
+  border: 1px solid rgba(255, 232, 31, 0.15);
+  
+  /* Sombras em camadas: sombra de oclusão profunda + brilho interno subtil */
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.8),
+    inset 0 0 20px rgba(255, 232, 31, 0.05);
+  
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.navbar-item {
+  color: rgba(255, 232, 31, 0.85); /* Ligeiramente opaco em estado neutro */
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  
+  /* Transições explícitas. Uso de cubic-bezier para um movimento 'snappy' e orgânico */
+  transition: 
+    color 0.25s ease-out,
+    text-shadow 0.25s ease-out,
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+  /* Força a aceleração por hardware (GPU) para as propriedades que vão mudar */
+  will-change: transform, text-shadow;
+}
+
+.navbar-item:hover {
+  color: #FFFFFF;
+  /* Brilho em múltiplas camadas para simular emissão de luz real (Bloom) */
+  text-shadow: 
+    0 0 8px var(--sw-yellow-glow),
+    0 0 16px var(--sw-yellow-glow),
+    0 0 30px rgba(255, 232, 31, 0.3);
+  
+  /* Transformação composta para feedback tátil evidente */
+  transform: translateY(-3px) scale(1.03);
+}

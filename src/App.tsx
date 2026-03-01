@@ -2,23 +2,19 @@ import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { Planet } from './components/game/Planet';
+import { Planet } from './components/canvas/Planet';
+import { Navbar } from './components/dom/NavBar';
+import Space from './components/canvas/Space'; // Ajusta o caminho de importação conforme a tua estrutura
 
 const App: React.FC = () => {
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
       
-      {/* DOM Overlay */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
-        <nav style={{ pointerEvents: 'auto', padding: '2rem', color: 'white', display: 'flex', gap: '2rem' }}>
-          <span>About</span>
-          <span>Experience</span>
-          <span>Projects</span>
-          <span>Contact</span>
-        </nav>
+        <Navbar />
       </div>
 
-      {/* WebGL Canvas */}
+      {/* CAMADA WEBGL */}
       <Canvas
         style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
         camera={{ position: [0, 2, 10], fov: 45, near: 0.1, far: 1000 }}
@@ -30,26 +26,20 @@ const App: React.FC = () => {
         }}
         dpr={[1, 2]}
       >
-        <color attach="background" args={['#050505']} />
+        <color attach="background" args={['#000000']} />
         
-        {/* Iluminação de Estúdio para Teste */}
-        <ambientLight intensity={1.5} />
-        <directionalLight position={[10, 10, 5]} intensity={2} />
+        {/* Componente Modular Injetado */}
+        <Space />
 
-        {/* Utilitário Drei para rotação de câmara via rato. 
-            Será removido mais tarde quando implementarmos a animação de curvas de Bézier. */}
         <OrbitControls makeDefault />
 
-        {/* Fronteira de Assincronicidade. 
-            O fallback={null} significa que nada é renderizado enquanto o .glb descarrega. */}
         <Suspense fallback={null}>
           <Planet 
-            modelPath="/models/planets/default.glb" 
+            name="test" 
             position={[0, 0, 0]} 
-            onClick={(targetPosition) => console.log('Coordenadas de transição:', targetPosition)} 
+            onClick={(targetPosition) => console.log('Alvo:', targetPosition)} 
           />
         </Suspense>
-
       </Canvas>
     </div>
   );
