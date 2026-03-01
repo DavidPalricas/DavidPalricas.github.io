@@ -1,0 +1,10 @@
+.badge-theme {
+  background: rgba(150, 50, 255, 0.15);
+  color: #c288ff;
+  border: 1px solid rgba(150, 50, 255, 0.3);
+}
+
+.action-mandatory {
+  background: rgba(255, 232, 31, 0.1);
+  border-color: rgba(255, 232, 31, 0.4);
+}

@@ -18,8 +18,8 @@ This repository contains the source code for an interactive 3D portfolio, design
 * **State Lifting & Flat Topology (`App.tsx`):** Navigation state (`activeSection`) has been lifted to the root component, establishing a *Single Source of Truth* that simultaneously and synchronously orchestrates WebGL and DOM click triggers. The DOM tree is strictly flattened to prevent rendering bottlenecks (Composite/Paint layers overhead), including a static semantic `<footer>` for copyright injection.
 
 ### Data Layer (`src/data`)
-* **Logical Isolation & Strict Typing:** Static data (profile, education, experience, links) is extracted into strictly typed constants (`aboutData.ts`, `experienceData.ts`, and `config.ts`).
-* **Union Types & Optional Chains:** Enforces compiler-level rejection of arbitrary strings (e.g., `WorkMode`, `WorkType`), preventing runtime parsing errors and ensuring deterministic conditional rendering for optional action links.
+* **Logical Isolation & Strict Typing:** Static data is extracted into strictly typed constants (`aboutData.ts`, `experienceData.ts`, `projectData.ts`, `gameJamData.ts`, and `config.ts`).
+* **Union Types & Optional Chains:** Enforces compiler-level rejection of arbitrary strings (e.g., `WorkMode`, `ProjectType`), preventing runtime parsing errors and ensuring deterministic conditional rendering for optional action links.
 
 ### WebGL Layer (`src/components/canvas`)
 * **Global Scene Setup:** R3F Canvas configured with `ACESFilmicToneMapping` and `SRGBColorSpace` for accurate PBR rendering, and dynamic *pixel ratio* (`dpr={[1, 2]}`) to support *high-DPI* screens without dropping *frames*.
@@ -28,13 +28,12 @@ This repository contains the source code for an interactive 3D portfolio, design
 * **Planet System (`Planet.tsx`):** Modular and dynamic 3D object handler triggering custom cursors and click events via *raycast* that emit the exact `worldPosition` of the target.
 
 ### DOM Layer (`src/components/dom`)
+* **CSS Architecture (`SharedPanels.css`):** Global extraction of common UI patterns (Glassmorphism interfaces, typography, custom scrollbars, and timeline topologies). This enforces DRY principles, optimizes CSSOM parsing by the browser, and eliminates redundant payload from the Vite build pipeline. Specific components (`About.css`, `Experience.css`, `Projects.css`, `GameJams.css`) retain only strict structural overrides or unique visual identities.
 * **Navigation Overlay (`Navbar.tsx`):** Pure component, event-driven via *props*, with a *flexbox layout* and advanced GPU-accelerated *Glassmorphism* styling.
-* **About Panel (`About.tsx`):** High-performance interface conditionally managed by the `App.tsx` root state.
-  * Raster images (logos) were explicitly purged to eliminate unnecessary HTTP requests and prevent Cumulative Layout Shifts (CLS).
-  * Education timeline styled via CSS pseudo-elements to avoid DOM pollution.
-* **Experience Panel (`Experience.tsx`):** Extensible timeline component mirroring the *About* architecture.
-  * Implements short-circuit evaluation (`&&`) for deterministic rendering of interactive action buttons based on optional data properties.
-  * Forces vertical stack flex-layouts for metadata to prevent unpredictable wrapping and layout thrashing.
+* **UI Panels (`About.tsx`, `Experience.tsx`, `Projects.tsx`, `GameJams.tsx`):** High-performance functional components utilizing `React.memo` to block unnecessary re-renders.
+  * Raster images are purged where possible to eliminate HTTP requests and prevent Cumulative Layout Shifts (CLS).
+  * Heavy use of short-circuit evaluation (`&&`) guarantees deterministic DOM tree injection for optional data fields.
+  * Flexbox is restricted to rigid axes to prevent layout thrashing during DOM reflows.
 
 ## Next Steps / Roadmap
 

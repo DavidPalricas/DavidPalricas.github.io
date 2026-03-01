@@ -1,67 +1,5 @@
-.about-panel {
-  position: absolute;
-  top: 50%;
-  left: 10%;
-  transform: translateY(-50%);
-  width: min(90vw, 750px);
-  max-height: 85vh;
-  overflow-y: auto;
-  
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 232, 31, 0.2);
-  border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
-  
-  padding: 3rem;
-  color: #fff;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  pointer-events: auto;
-  
-  will-change: transform, opacity;
-}
-
-.about-panel::-webkit-scrollbar {
-  width: 8px;
-}
-
-.about-panel::-webkit-scrollbar-thumb {
-  background: var(--sw-yellow);
-  border-radius: 10px;
-}
-
-.about-panel::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.section-title {
-  color: var(--sw-yellow);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
-  font-weight: 700;
-  text-shadow: 0 0 10px var(--sw-yellow-glow);
-}
-
-.close-button {
-  position: absolute;
-  top: 2.5rem;
-  right: 2.5rem;
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: color 0.2s ease, transform 0.2s ease;
-  z-index: 10;
-}
-
-.close-button:hover {
-  color: var(--sw-yellow);
-  transform: scale(1.1) rotate(90deg);
-}
+/* Override da largura global do painel para o contexto About */
+.about-panel { width: min(90vw, 750px); }
 
 .profile-section {
   display: flex;
@@ -160,13 +98,8 @@
   margin-top: 1rem;
 }
 
-.profile-bio-text p {
-  margin: 0 0 1rem 0;
-}
-
-.profile-bio-text p:last-child {
-  margin-bottom: 0;
-}
+.profile-bio-text p { margin: 0 0 1rem 0; }
+.profile-bio-text p:last-child { margin-bottom: 0; }
 
 .education-section {
   position: relative;
@@ -174,106 +107,9 @@
   padding-top: 2rem;
 }
 
-.timeline-container {
-  position: relative;
-  padding-left: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-}
-
-.timeline-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 5px; 
-  width: 2px;
-  background: linear-gradient(to bottom, var(--sw-yellow) 0%, rgba(255, 232, 31, 0.05) 100%);
-}
-
-.education-node {
-  position: relative;
-}
-
-.node-marker {
-  position: absolute;
-  left: -2rem;
-  top: 5px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #000;
-  border: 2px solid var(--sw-yellow);
-  box-shadow: 0 0 8px var(--sw-yellow-glow);
-  z-index: 2;
-}
-
-.node-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.node-year {
-  font-size: 0.85rem;
-  color: var(--sw-yellow);
-  font-weight: 600;
-  letter-spacing: 1px;
-}
-
-.node-header {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.2rem;
-}
-
-.node-degree {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-.node-course {
-  margin: 0;
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 500;
-}
-
-.node-institution {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 0.5rem;
-}
-
-.node-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.action-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #fff;
-  text-decoration: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: all 0.2s ease;
-}
-
-.action-button:hover {
-  background: rgba(255, 232, 31, 0.15);
-  border-color: var(--sw-yellow);
-  color: var(--sw-yellow);
-  transform: translateY(-2px);
-}
+/* Modificadores exclusivos de Educação */
+.node-content { display: flex; flex-direction: column; gap: 0.4rem; }
+.node-year { font-size: 0.85rem; color: var(--sw-yellow); font-weight: 600; letter-spacing: 1px; }
+.node-degree { margin: 0; font-size: 1.2rem; font-weight: 700; color: #fff; }
+.node-course { margin: 0; font-size: 0.95rem; color: rgba(255, 255, 255, 0.9); font-weight: 500; }
+.node-institution { font-size: 0.85rem; color: rgba(255, 255, 255, 0.5); margin-bottom: 0.5rem; }

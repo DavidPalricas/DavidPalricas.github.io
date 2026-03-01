@@ -8,7 +8,9 @@ import { Navbar } from './components/dom/Navbar';
 import { About } from './components/dom/NavBarElements/About/About';
 import { Experience } from './components/dom/NavBarElements/Experience/Experience';
 import { Projects } from './components/dom/NavBarElements/Projects/Projects';
+import { GameJams } from './components/dom/NavBarElements/GameJams/GameJams';
 import { SECTIONS } from './config';
+import './components/dom/NavBarElements/NavBarElement.css';
 
 const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -43,6 +45,7 @@ const App: React.FC = () => {
         {activeSection === 'about' && <About onClose={() => handleNavigation(null)} />}
         {activeSection === 'experience' && <Experience onClose={() => handleNavigation(null)} />}
         {activeSection === 'projects' && <Projects onClose={() => handleNavigation(null)} />}
+        {activeSection === 'game-jams' && <GameJams onClose={() => handleNavigation(null)} />}
         {/* Assinatura / Copyright */}
         <footer style={{ 
           position: 'absolute', 
