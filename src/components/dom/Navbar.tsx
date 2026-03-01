@@ -1,19 +1,22 @@
 import React from 'react';
+import { SECTIONS } from '../../config';
 import './Navbar.css';
 
-// Definição da estrutura de dados da navegação
-const NAV_ITEMS = ['About', 'Experience', 'Projects', 'Contact'];
+interface NavbarProps {
+  activeSection: string | null;
+  onNavigate: (id: string) => void;
+}
 
-export const Navbar: React.FC = () => {
+export const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate }) => {
   return (
-    <nav className="navbar-container">
-      {NAV_ITEMS.map((item) => (
+    <nav className="navbar-container" style={{ pointerEvents: 'auto' }}>
+      {SECTIONS.map((section) => (
         <span 
-          key={item} 
-          className="navbar-item"
-          onClick={() => console.log(`Navegar para: ${item}`)}
+          key={section.id} 
+          className={`navbar-item ${activeSection === section.id ? 'active' : ''}`}
+          onClick={() => onNavigate(section.id)}
         >
-          {item}
+          {section.label}
         </span>
       ))}
     </nav>

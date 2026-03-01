@@ -11,7 +11,7 @@
   transform: translateX(-50%);
   display: flex;
   gap: 3rem;
-  padding: 1rem 3rem;
+  padding: 1.2rem 4rem;
   
   /* Fundo escurecido para maior contraste com o amarelo */
   background: var(--glass-bg);
@@ -60,4 +60,10 @@
   
   /* Transformação composta para feedback tátil evidente */
   transform: translateY(-3px) scale(1.03);
+}
+
+.navbar-item.active {
+  color: var(--sw-yellow);
+  text-shadow: 0 0 15px var(--sw-yellow-glow);
+  transform: translateY(-2px);
 }

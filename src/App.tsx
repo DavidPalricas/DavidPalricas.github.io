@@ -1,17 +1,42 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Planet } from './components/canvas/Planet';
-import { Navbar } from './components/dom/NavBar';
-import Space from './components/canvas/Space'; // Ajusta o caminho de importação conforme a tua estrutura
+import { Navbar } from './components/dom/Navbar';
+import { About } from './components/dom/NavBarElements/About/About';
+import Space from './components/canvas/Space';
+import { SECTIONS } from './config';
 
 const App: React.FC = () => {
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  const handleNavigation = useCallback((sectionId: string | null, _worldPosition?: THREE.Vector3) => {
+    // Lógica de Toggle: Se clicar na secção que já está aberta, fecha (null).
+    setActiveSection(prev => {
+      const isClosing = prev === sectionId || sectionId === null;
+      if (isClosing) {
+        console.log('[Sistema] A fechar interface DOM e a repor câmara.');
+        // Aqui o GSAP fará o reset da câmara para a posição inicial
+        return null;
+      }
+      return sectionId;
+    });
+    
+  }, []);
+
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
       
+      {/* CAMADA DOM */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
-        <Navbar />
+        <Navbar activeSection={activeSection} onNavigate={handleNavigation} />
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
+      <Navbar activeSection={activeSection} onNavigate={handleNavigation} />
+          
+          {/* Renderização condicional imediata */}
+          {activeSection === 'about' && <About onClose={() => handleNavigation(null)} />}
+</div>
       </div>
 
       {/* CAMADA WEBGL */}
@@ -27,18 +52,18 @@ const App: React.FC = () => {
         dpr={[1, 2]}
       >
         <color attach="background" args={['#000000']} />
-        
-        {/* Componente Modular Injetado */}
         <Space />
-
         <OrbitControls makeDefault />
 
         <Suspense fallback={null}>
-          <Planet 
-            name="test" 
-            position={[0, 0, 0]} 
-            onClick={(targetPosition) => console.log('Alvo:', targetPosition)} 
-          />
+          {SECTIONS.map((section) => (
+            <Planet 
+              key={section.id}
+              name={section.modelName} 
+              position={section.position} 
+              onClick={(pos) => handleNavigation(section.id, pos)} 
+            />
+          ))}
         </Suspense>
       </Canvas>
     </div>
