@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { Suspense, useState, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
@@ -16,6 +17,8 @@ import './components/dom/NavBarElements/NavBarElement.css';
 
 const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  // Estado isolado para a propagação do hover do WebGL para o DOM
+  const [hoveredSection, setHoveredSection] = useState<string | null>(null);
 
   const handleNavigation = useCallback((sectionId: string | null, worldPosition?: THREE.Vector3) => {
     setActiveSection(prev => {
@@ -41,7 +44,11 @@ const App: React.FC = () => {
       
       {/* CAMADA DOM - Topologia Achatada */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
-        <Navbar activeSection={activeSection} onNavigate={handleNavigation} />
+        <Navbar 
+          activeSection={activeSection} 
+          hoveredSection={hoveredSection} 
+          onNavigate={handleNavigation} 
+        />
         
         {/* Renderização Condicional de Modais */}
         {activeSection === 'about' && <About onClose={() => handleNavigation(null)} />}
@@ -82,15 +89,24 @@ const App: React.FC = () => {
         <Space />
         
         {/* Restrição total de Zoom e Pan para manter a integridade vetorial da câmara para o GSAP */}
-        <OrbitControls makeDefault enableZoom={false} enablePan={false} />
+       <OrbitControls 
+          makeDefault 
+          enableZoom={false} 
+          enablePan={false} 
+          enableRotate={false} /* Anula completamente o input do utilizador */
+          autoRotate={activeSection === null} /* Roda estritamente no estado IDLE global */
+          autoRotateSpeed={0.2} /* Velocidade cinemática lenta para evitar motion sickness */
+        />
 
         <Suspense fallback={null}>
           {SECTIONS.map((section) => (
             <Planet 
               key={section.id}
+              id={section.id}
               name={section.modelName} 
               position={section.position} 
               onClick={(pos) => handleNavigation(section.id, pos)} 
+              onHoverStateChange={setHoveredSection}
             />
           ))}
         </Suspense>
