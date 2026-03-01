@@ -10,6 +10,7 @@ import { Experience } from './components/dom/NavBarElements/Experience/Experienc
 import { Projects } from './components/dom/NavBarElements/Projects/Projects';
 import { GameJams } from './components/dom/NavBarElements/GameJams/GameJams';
 import { Publications } from './components/dom/NavBarElements/Publications/Publication';
+import { Contact } from './components/dom/NavBarElements/Contact/Contact';
 import { SECTIONS } from './config';
 import './components/dom/NavBarElements/NavBarElement.css';
 
@@ -48,6 +49,7 @@ const App: React.FC = () => {
         {activeSection === 'projects' && <Projects onClose={() => handleNavigation(null)} />}
         {activeSection === 'game-jams' && <GameJams onClose={() => handleNavigation(null)} />}
         {activeSection === 'publications' && <Publications onClose={() => handleNavigation(null)} />}
+        {activeSection === 'contact' && <Contact onClose={() => handleNavigation(null)} />}
         
         {/* Assinatura / Copyright */}
         <footer style={{ 
