@@ -76,7 +76,7 @@ const App: React.FC = () => {
       {/* CAMADA WEBGL - Hardware Acceleration isolada */}
       <Canvas
         style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
-        camera={{ position: [0, 2, 10], fov: 45, near: 0.1, far: 1000 }}
+        camera={{ position: [0, 2, 20], fov: 45, near: 0.1, far: 1000 }}
         gl={{
           antialias: true,
           toneMapping: THREE.ACESFilmicToneMapping,
