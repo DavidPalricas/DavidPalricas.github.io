@@ -3,43 +3,47 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Planet } from './components/canvas/Planet';
+import Space from './components/canvas/Space';
 import { Navbar } from './components/dom/Navbar';
 import { About } from './components/dom/NavBarElements/About/About';
-import Space from './components/canvas/Space';
+import { Experience } from './components/dom/NavBarElements/Experience/Experience';
 import { SECTIONS } from './config';
 
 const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
-  const handleNavigation = useCallback((sectionId: string | null, _worldPosition?: THREE.Vector3) => {
-    // Lógica de Toggle: Se clicar na secção que já está aberta, fecha (null).
+  const handleNavigation = useCallback((sectionId: string | null, worldPosition?: THREE.Vector3) => {
     setActiveSection(prev => {
       const isClosing = prev === sectionId || sectionId === null;
+      
       if (isClosing) {
-        console.log('[Sistema] A fechar interface DOM e a repor câmara.');
-        // Aqui o GSAP fará o reset da câmara para a posição inicial
+        console.log('[Sistema] Interface fechada. Executar rotina GSAP para reposição da câmara na origem.');
+        // TODO: Inserir GSAP tween para reset da câmara -> gsap.to(camera.position, { x: 0, y: 2, z: 10, duration: 1.5, ease: 'power3.inOut' })
         return null;
       }
+
+      if (worldPosition) {
+        console.log(`[Sistema] Navegação para ${sectionId}. Executar GSAP para alvo vetorial:`, worldPosition);
+        // TODO: Inserir GSAP tween interpolando a câmara baseada no vetor de worldPosition do Planeta alvo
+      }
+
       return sectionId;
     });
-    
   }, []);
 
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
       
-      {/* CAMADA DOM */}
+      {/* CAMADA DOM - Topologia Achatada */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
         <Navbar activeSection={activeSection} onNavigate={handleNavigation} />
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
-      <Navbar activeSection={activeSection} onNavigate={handleNavigation} />
-          
-          {/* Renderização condicional imediata */}
-          {activeSection === 'about' && <About onClose={() => handleNavigation(null)} />}
-</div>
+        
+        {/* Renderização Condicional de Modais */}
+        {activeSection === 'about' && <About onClose={() => handleNavigation(null)} />}
+        {activeSection === 'experience' && <Experience onClose={() => handleNavigation(null)} />}
       </div>
 
-      {/* CAMADA WEBGL */}
+      {/* CAMADA WEBGL - Hardware Acceleration isolada */}
       <Canvas
         style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
         camera={{ position: [0, 2, 10], fov: 45, near: 0.1, far: 1000 }}
@@ -66,6 +70,7 @@ const App: React.FC = () => {
           ))}
         </Suspense>
       </Canvas>
+      
     </div>
   );
 };
