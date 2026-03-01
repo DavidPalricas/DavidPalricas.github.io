@@ -41,6 +41,20 @@ const App: React.FC = () => {
         {/* Renderização Condicional de Modais */}
         {activeSection === 'about' && <About onClose={() => handleNavigation(null)} />}
         {activeSection === 'experience' && <Experience onClose={() => handleNavigation(null)} />}
+
+        {/* Assinatura / Copyright */}
+        <footer style={{ 
+          position: 'absolute', 
+          bottom: '2rem', 
+          right: '2.5rem', 
+          fontSize: '0.85rem', 
+          color: 'rgba(255, 255, 255, 0.5)', 
+          fontFamily: "'Inter', system-ui, sans-serif",
+          pointerEvents: 'auto',
+          letterSpacing: '0.5px'
+        }}>
+          &copy; {new Date().getFullYear()} <span style={{ color: 'var(--sw-yellow)', fontWeight: 600 }}>David Palricas</span>.
+        </footer>
       </div>
 
       {/* CAMADA WEBGL - Hardware Acceleration isolada */}
@@ -57,7 +71,9 @@ const App: React.FC = () => {
       >
         <color attach="background" args={['#000000']} />
         <Space />
-        <OrbitControls makeDefault />
+        
+        {/* Restrição total de Zoom e Pan para manter a integridade vetorial da câmara para o GSAP */}
+        <OrbitControls makeDefault enableZoom={false} enablePan={false} />
 
         <Suspense fallback={null}>
           {SECTIONS.map((section) => (

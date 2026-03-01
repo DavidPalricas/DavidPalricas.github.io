@@ -27,15 +27,28 @@ const EducationNode: React.FC<{ data: EducationRecord }> = React.memo(({ data })
     <div className="node-content">
       <time className="node-year">{data.startYear} — {data.endYear || 'Presente'}</time>
       <div className="node-header">
-        <h3 className="node-degree">
-          <a href={data.courseLink} target="_blank" rel="noopener noreferrer" className="course-link">
-            {data.degree}
-          </a>
-        </h3>
-        <img src={data.institutionLogo} alt={data.institution} className="institution-logo" loading="lazy" />
+        <h3 className="node-degree">{data.degree}</h3>
       </div>
       <h4 className="node-course">{data.courseName}</h4>
       <span className="node-institution">{data.institution}</span>
+      
+      <div className="node-actions">
+        <a href={data.institutionLink} target="_blank" rel="noopener noreferrer" className="action-button">
+          Institution Website
+          <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+        
+        {data.courseLink && (
+          <a href={data.courseLink} target="_blank" rel="noopener noreferrer" className="action-button">
+            Course
+            <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
+        )}
+      </div>
     </div>
   </div>
 ));
@@ -51,12 +64,10 @@ export const About: React.FC<AboutProps> = ({ onClose }) => {
       </button>
 
       <div className="profile-section">
-        
         <div className="profile-sidebar">
           <div className="profile-picture">
             <img src="/imgs/profile.jpeg" alt={`Portrait of ${PROFILE_DATA.name}`} loading="eager" />
           </div>
-          
           <div className="links-grid">
             {PROFILE_DATA.links.map((link, index) => (
               <a key={index} href={link.url} target="_blank" rel="noopener noreferrer" className="profile-link">
@@ -69,21 +80,16 @@ export const About: React.FC<AboutProps> = ({ onClose }) => {
 
         <div className="profile-main-content">
           <h2 className="section-title">About</h2>
-          
           <div className="profile-text-block">
             <h1 className="profile-name">{PROFILE_DATA.name}</h1>
             <h3 className="profile-title">{PROFILE_DATA.title}</h3>
-            
-            {/* Otimização de legibilidade com blocos iterados */}
             <div className="profile-bio-text">
               {PROFILE_DATA.bio.map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>
               ))}
             </div>
-            
           </div>
         </div>
-
       </div>
 
       <div className="education-section">
@@ -94,7 +100,6 @@ export const About: React.FC<AboutProps> = ({ onClose }) => {
           ))}
         </div>
       </div>
-      
     </section>
   );
 };

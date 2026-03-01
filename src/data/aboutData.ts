@@ -8,11 +8,11 @@ export interface EducationRecord {
   id: string;
   degree: string;
   institution: string;
-  institutionLogo: string;
+  institutionLink: string; // Obrigatório
   startYear: number;
   endYear?: number | 'Presente';
   courseName: string;
-  courseLink: string;
+  courseLink?: string;     // Opcional
 }
 
 export const PROFILE_DATA = {
@@ -38,7 +38,7 @@ export const EDUCATION_DATA: EducationRecord[] = [
     id: 'msc',
     degree: "Master's Degree",
     institution: 'Universidade de Aveiro',
-    institutionLogo: 'imgs/logos/ua.png', 
+    institutionLink: 'https://www.ua.pt/en/',
     startYear: 2024,
     endYear: 2026,
     courseName: 'Digital Game Development',
@@ -48,7 +48,7 @@ export const EDUCATION_DATA: EducationRecord[] = [
     id: 'bsc',
     degree: "Bachelor's Degree",
     institution: 'Universidade de Aveiro',
-    institutionLogo: 'imgs/logos/ua.png',
+    institutionLink: 'https://www.ua.pt/en/',
     startYear: 2021,
     endYear: 2024,
     courseName: 'Computer and Informatics Engineering',
@@ -58,10 +58,9 @@ export const EDUCATION_DATA: EducationRecord[] = [
     id: 'highschool',
     degree: 'High School Level',
     institution: 'Escola Secundária Dr. Joaquim de Carvalho',
-    institutionLogo: 'imgs/logos/esjcff.jpg',
+    institutionLink: 'https://esjcff.pt/site/index.php',
     startYear: 2018,
     endYear: 2021,
-    courseName: 'Scientific-Humanistic Course in Science and Technology',
-    courseLink: 'https://esjcff.pt/site/index.php'
+    courseName: 'Scientific-Humanistic Course in Science and Technology'
   }
 ];

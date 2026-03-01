@@ -15,24 +15,26 @@ This repository contains the source code for an interactive 3D portfolio, design
 
 ### Foundation & State Management
 * **Project Setup:** Base development environment established with Vite, explicitly configured for React 19 and strict TypeScript checking.
-* **State Lifting (App.tsx):** Navigation state (`activeSection`) has been lifted to the root component, establishing a *Single Source of Truth* that simultaneously and synchronously orchestrates WebGL and DOM click triggers.
-* **Dual-Layer Layout:** Functional implementation isolating the DOM *overlay* (`z-index: 10`, `pointer-events: none/auto`) from the underlying WebGL Canvas (`z-index: 1`).
+* **State Lifting & Flat Topology (`App.tsx`):** Navigation state (`activeSection`) has been lifted to the root component, establishing a *Single Source of Truth* that simultaneously and synchronously orchestrates WebGL and DOM click triggers. The DOM tree is strictly flattened to prevent rendering bottlenecks (Composite/Paint layers overhead), including a static semantic `<footer>` for copyright injection.
 
 ### Data Layer (`src/data`)
-* **Logical Isolation:** Static data (profile, education, links) extracted into strictly typed constants (`aboutData.ts` and `config.ts`). Prevents polluting JSX components with static JSON data and ensures scalability when adding new nodes without forcing structural UI recompilation.
+* **Logical Isolation & Strict Typing:** Static data (profile, education, experience, links) is extracted into strictly typed constants (`aboutData.ts`, `experienceData.ts`, and `config.ts`).
+* **Union Types & Optional Chains:** Enforces compiler-level rejection of arbitrary strings (e.g., `WorkMode`, `WorkType`), preventing runtime parsing errors and ensuring deterministic conditional rendering for optional action links.
 
 ### WebGL Layer (`src/components/canvas`)
 * **Global Scene Setup:** R3F Canvas configured with `ACESFilmicToneMapping` and `SRGBColorSpace` for accurate PBR rendering, and dynamic *pixel ratio* (`dpr={[1, 2]}`) to support *high-DPI* screens without dropping *frames*.
 * **Space Environment (`Space.tsx`):** Volumetric background system using the default Drei `<Stars />` component (7,000 particles).
-* **Planet System (`Planet.tsx`):** Modular and dynamic 3D object handler.
-  * Full integration of *Pointer* events: custom cursors and click events via *raycast* that emit the exact `worldPosition` of the target.
+* **Camera Control Lockdown:** `OrbitControls` manually restricted (`enableZoom={false}`, `enablePan={false}`). This is mathematically mandatory to preserve the integrity of the camera's position and target vectors prior to GSAP non-linear interpolations.
+* **Planet System (`Planet.tsx`):** Modular and dynamic 3D object handler triggering custom cursors and click events via *raycast* that emit the exact `worldPosition` of the target.
 
 ### DOM Layer (`src/components/dom`)
-* **Navigation Overlay (`Navbar.tsx`):** Converted into a pure component (*dumb component*), event-driven via *props*, with a *flexbox layout* and advanced GPU-accelerated *Glassmorphism* styling.
+* **Navigation Overlay (`Navbar.tsx`):** Pure component, event-driven via *props*, with a *flexbox layout* and advanced GPU-accelerated *Glassmorphism* styling.
 * **About Panel (`About.tsx`):** High-performance interface conditionally managed by the `App.tsx` root state.
-  * Optimized vector rendering through *inline* SVGs (eliminating the latency of additional HTTP *requests*).
-  * Education *timeline* structuring via CSS pseudo-elements (`::before`), avoiding empty node formatting in the DOM tree (*DOM pollution*).
-  * Typography processing in iterable *arrays* to mitigate *layout thrashing* and enforce semantic structural spacing.
+  * Raster images (logos) were explicitly purged to eliminate unnecessary HTTP requests and prevent Cumulative Layout Shifts (CLS).
+  * Education timeline styled via CSS pseudo-elements to avoid DOM pollution.
+* **Experience Panel (`Experience.tsx`):** Extensible timeline component mirroring the *About* architecture.
+  * Implements short-circuit evaluation (`&&`) for deterministic rendering of interactive action buttons based on optional data properties.
+  * Forces vertical stack flex-layouts for metadata to prevent unpredictable wrapping and layout thrashing.
 
 ## Next Steps / Roadmap
 
@@ -53,4 +55,3 @@ npm install
 
 # 3. Start local server with Hot Module Replacement
 npm run dev
-```
