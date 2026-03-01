@@ -1,0 +1,43 @@
+/* Herda a estrutura base do Experience.css para consistência e performance */
+.project-panel {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+  width: min(90vw, 850px);
+  max-height: 85vh;
+  overflow-y: auto;
+  
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 232, 31, 0.2);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+  
+  padding: 3rem;
+  color: #fff;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  pointer-events: auto;
+  will-change: transform, opacity;
+}
+
+.project-panel::-webkit-scrollbar { width: 8px; }
+.project-panel::-webkit-scrollbar-thumb { background: var(--sw-yellow); border-radius: 10px; }
+.project-panel::-webkit-scrollbar-track { background: transparent; }
+
+.project-node {
+  position: relative;
+  display: block;
+}
+
+/* Identidade visual específica para a badge de nota (Grade) */
+.badge-grade {
+  background: rgba(255, 100, 100, 0.15);
+  color: #ff8888;
+  border: 1px solid rgba(255, 100, 100, 0.3);
+}
+
+/* As restantes classes (timeline-container, node-marker, node-header, node-actions, tech-chip, close-button) 
+são estruturalmente idênticas ao Experience.css. Deves movê-las para um ficheiro global (ex: components.css) 
+caso queiras evitar duplicação de CSS no build final do Vite. */

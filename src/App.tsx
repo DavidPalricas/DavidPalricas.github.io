@@ -7,6 +7,7 @@ import Space from './components/canvas/Space';
 import { Navbar } from './components/dom/Navbar';
 import { About } from './components/dom/NavBarElements/About/About';
 import { Experience } from './components/dom/NavBarElements/Experience/Experience';
+import { Projects } from './components/dom/NavBarElements/Projects/Projects';
 import { SECTIONS } from './config';
 
 const App: React.FC = () => {
@@ -41,7 +42,7 @@ const App: React.FC = () => {
         {/* Renderização Condicional de Modais */}
         {activeSection === 'about' && <About onClose={() => handleNavigation(null)} />}
         {activeSection === 'experience' && <Experience onClose={() => handleNavigation(null)} />}
-
+        {activeSection === 'projects' && <Projects onClose={() => handleNavigation(null)} />}
         {/* Assinatura / Copyright */}
         <footer style={{ 
           position: 'absolute', 
