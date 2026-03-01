@@ -11,10 +11,9 @@ const ExperienceNode: React.FC<{ data: ExperienceRecord }> = React.memo(({ data 
     <div className="node-marker" />
     <div className="node-content">
       <header className="node-header">
-        <div className="node-title-group">
-          <h3 className="node-title">{data.title}</h3>
-          <span className="node-company">{data.company}</span>
-        </div>
+        <h3 className="node-title">{data.title}</h3>
+        {/* Remoção do link, revertido para texto simples */}
+        <span className="node-company">{data.company}</span>
         <div className="node-meta">
           <time className="node-date">{data.startDate} — {data.endDate}</time>
           <div className="node-badges">
@@ -36,6 +35,44 @@ const ExperienceNode: React.FC<{ data: ExperienceRecord }> = React.memo(({ data 
           <p key={index}>{paragraph}</p>
         ))}
       </div>
+
+      {/* Renderização Condicional Expandida - Geração estrita apenas se houver links */}
+      {(data.companyLink || data.projectLink || data.demoLink || data.certificateLink) && (
+        <div className="node-actions">
+          {data.companyLink && (
+            <a href={data.companyLink} target="_blank" rel="noopener noreferrer" className="action-button">
+              Company Website
+              <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+          )}
+          {data.demoLink && (
+            <a href={data.demoLink} target="_blank" rel="noopener noreferrer" className="action-button">
+              Demo
+              <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+            </a>
+          )}
+          {data.projectLink && (
+            <a href={data.projectLink} target="_blank" rel="noopener noreferrer" className="action-button">
+              Project
+              <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+              </svg>
+            </a>
+          )}
+          {data.certificateLink && (
+            <a href={data.certificateLink} target="_blank" rel="noopener noreferrer" className="action-button">
+              Certificate
+              <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </a>
+          )}
+        </div>
+      )}
 
       <ul className="node-technologies" aria-label="Tecnologias utilizadas">
         {data.technologies.map((tech) => (
