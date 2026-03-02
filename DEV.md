@@ -1,66 +1,57 @@
-# Interactive 3D Portfolio: Game & VR Developer
+# Portefólio 3D Interativo: Desenvolvimento de Jogos e VR
 
-## System Architecture
-This repository contains the source code for an interactive 3D portfolio, designed with a strict hybrid dual-layer architecture (WebGL + DOM). The 3D engine acts strictly as an interactive tech demo, while the User Interface resides entirely in the DOM to ensure frictionless accessibility, SEO, and readability. Spatial navigation uses *raycasting* with Bézier curve interpolation and quaternion alignment for smooth and deterministic camera transitions.
+## Arquitetura de Sistema
+Este repositório contém o código-fonte de um portefólio 3D interativo, concebido sob uma arquitetura híbrida e estrita de dupla camada (WebGL + DOM). O motor 3D atua puramente como uma demonstração técnica interativa, enquanto a Interface de Utilizador (UI) reside integralmente no DOM. Esta separação garante acessibilidade zero-atrito, indexação (SEO) eficaz e elimina o estrangulamento de performance típico de interfaces desenhadas em WebGL puro.
 
-## Tech Stack & Extreme Optimization
+## Stack Tecnológica e Otimização Extrema
 
-* **Core Framework:** React 19 + TypeScript. Strict typing is non-negotiable to ensure the stability of transformation matrices, UI states, and 3D vector math in the rendering *loop*. Bundled with **Vite** for HMR and optimized *builds*.
-* **Rendering Engine:** Three.js via React Three Fiber (R3F). R3F acts as a reconciler, declaratively managing the allocation and destruction of geometry and materials in VRAM in sync with the React component lifecycle, preventing *memory leaks*.
-* **Animation & Easing:** GSAP (GreenSock). Manages the temporal interpolation of the camera and trajectories independent of framerate, replacing raw `requestAnimationFrame` math with standardized non-linear *easing* functions.
-* **3D Asset Pipeline:** Models exported in `.glb`, optimized with spatial compression (Draco/Meshopt). Textures use KTX2 (Basis Universal) compression targeted at the GPU, drastically reducing network *payload* and *parsing* times.
-* **Infrastructure & Backend:** Vercel. Static frontend hosting coupled with Serverless Functions (`/api` directory). O formulário de contacto comunica via `fetch` assíncrono com o *endpoint* `/api/contact`, que utiliza o SDK da **Resend** em ambiente isolado. Devido à ausência de um domínio de nível superior (TLD) dedicado, a infraestrutura de email opera estritamente no modo *Sandbox* da Resend, possuindo um remetente estático (`onboarding@resend.dev`) e permitindo o envio de *payloads* exclusivamente para o email do administrador.
+* **Framework Core:** React 19 + TypeScript. A tipagem estrita é inegociável para garantir a estabilidade das matrizes de transformação, estados de UI e matemática vetorial 3D no *render loop*. Compilação gerida pelo **Vite** para HMR determinístico.
+* **Motor de Renderização:** Three.js via React Three Fiber (R3F). O R3F opera como um reconciliador, gerindo de forma declarativa a alocação e destruição de geometria na VRAM.
+* **Animação & Easing:** GSAP (GreenSock). Substitui a matemática manual de `requestAnimationFrame` por funções de interpolação não-linear para transições de câmara.
+* **Pipeline de Assets 3D:** Modelos em formato `.glb`. Utilização mandatória da diretiva `useGLTF.preload` ao nível do módulo para forçar o *caching* na RAM antes da instanciação do componente, eliminando a latência visual (*Jank*) durante a montagem de nós.
+* **Infraestrutura & Backend:** Vercel. Alojamento estático acoplado a *Serverless Functions* (`/api`). A API de contacto comunica via `fetch` assíncrono com o endpoint `/api/contact`, delegando o *payload* ao SDK da **Resend** em ambiente de *Sandbox*.
 
-## Data Structure & Current Implementation
+## Estrutura de Dados & Implementação Atual
 
-### Foundation & State Management
-* **Project Setup:** Base development environment established with Vite, explicitly configured for React 19 and strict TypeScript checking.
-* **State Lifting & Flat Topology (`App.tsx`):** Navigation state (`activeSection`) and WebGL interaction state (`hoveredSection`) have been lifted to the root component. This establishes a *Single Source of Truth* that synchronizes the DOM `Navbar` with GPU-level *raycast* events strictly via unidirectional data flow, avoiding recursive re-renders. The DOM tree is strictly flattened to prevent rendering bottlenecks.
+### Fundação & Gestão de Estado (`App.tsx`)
+* **Retenção de Estado (GPU Warm-up):** A renderização condicional clássica (montagem/desmontagem de modais) foi expurgada. Todos os componentes que contêm contextos `<Canvas>` são injetados no carregamento inicial da aplicação. A alternância de secções é controlada estritamente por oclusão de *hardware acceleration* via CSS (`opacity`, `visibility`, `pointer-events`), mantendo a *pipeline* gráfica permanentemente "quente" e reduzindo a latência de interação a 0ms.
+* **Oclusão de Raycast:** Implementação de uma máquina de estados booleana (`interactionEnabled`) que monitoriza o foco da janela do sistema operativo (eventos `blur`/`focus`) e o estado da UI. Quando um painel está aberto ou a janela perde o foco, o *raycasting* do CPU para intersecção de geometria 3D é sumariamente bloqueado, poupando ciclos de computação.
 
-### Data Layer (`src/data`)
-* **Logical Isolation & Strict Typing:** Static data is extracted into strictly typed constants (`aboutData.ts`, `experienceData.ts`, `projectData.ts`, `gameJamData.ts`, `publicationData.ts`, and `config.ts`).
-* **Union Types & Optional Chains:** Enforces compiler-level rejection of arbitrary strings (e.g., `PublicationStatus`, `WorkMode`). Ensures deterministic conditional rendering for complex node actions (e.g., evaluating `paperLink` vs `awardLink`).
+### Camada WebGL (`src/components/canvas`)
+* **Geometria Orbital Determinística:** Os vetores planetários são distribuídos utilizando projeção trigonométrica estrita ($r=8.5$, $\theta = n \cdot 60^\circ$). Isto estabiliza a disposição em anel, prevenindo distorção de FOV da câmara.
+* **Lockdown da Câmara:** O `OrbitControls` opera como uma máquina de estados passiva. A auto-rotação é suspensa no milissegundo em que uma secção é ativada (`activeSection`), congelando o sistema de coordenadas para entregar vetores limpos ao GSAP.
+* **Interpolação no Render Loop (`Planet.tsx`):** A escala de *hover* utiliza `lerp` sincronizado com o *delta time* diretamente no `useFrame`. Isto muta a matriz 3D contornando o ciclo de vida do React, garantindo *framerate* constante.
+* **FSM de Animação de Personagem (`ContactCharacter.tsx`):** O controlo de esqueletos 3D (Bones) é governado por uma Máquina de Estados Finitos (`enum`). Animações terminais (como `ERROR` ou `SUCCESS`) sofrem alteração explícita do modo de repetição na API do Three.js (`THREE.LoopOnce` e `clampWhenFinished = true`), evitando comportamentos em *loop* indesejados originados pelas definições de exportação do ficheiro GLTF.
 
-### WebGL Layer (`src/components/canvas`)
-* **Global Scene Setup:** R3F Canvas configured with `ACESFilmicToneMapping` and `SRGBColorSpace` for accurate PBR rendering, and dynamic *pixel ratio* (`dpr={[1, 2]}`) to support *high-DPI* screens.
-* **Space Environment (`Space.tsx`):** Volumetric background system using the default Drei `<Stars />` component.
-* **Deterministic Orbital Geometry:** Planet vectors in `config.ts` are mathematically distributed using strict trigonometric projection ($r=8.5$, $\theta = n \cdot 60^\circ$). This guarantees a perfectly stable 3D ring layout, preventing camera FOV distortion and GSAP interpolation anomalies.
-* **Camera Control Lockdown:** `OrbitControls` acts as a passive state machine. `autoRotate` is enabled during the global IDLE state but completely locked (`enableRotate={false}`) the millisecond a node is clicked, freezing the coordinate system to deliver clean vectors to GSAP.
-* **Planet System (`Planet.tsx`):** Employs `useFrame` for GPU-isolated scale interpolation (`lerp`) on hover events. This mutates the 3D matrix directly in the render loop without triggering the React component lifecycle, keeping the framerate strictly at 60/120Hz.
-* **FSM Character Animation (`ContactCharacter.tsx`):** 3D model animations are strictly governed by a Finite State Machine (`enum`) to handle blending (crossfade) between `Idle`, `Nodding`, and `Running` states, preventing impossible geometry overlapping.
+### Camada DOM (`src/components/dom`)
+* **Isolamento Espacial Absoluto:** Painéis UI utilizam ancoragem geométrica rígida (`top: 8rem` e `max-height: calc(100vh - 10rem)`) no lugar de translações dinâmicas de eixo (`translateY`). Isto elimina colisões com o *offset* da Navbar e garante a integridade da *scrollbar* interna sem causar *layout thrashing*.
+* **Integridade do Flexbox (`Navbar.css`):** Elementos de navegação possuem constrangimento estrito de fluxo de texto (`white-space: nowrap`), forçando o eixo X do contentor *Flex* a recalcular a sua expansão a partir do centro sem quebrar as grelhas em resoluções atípicas.
+* **Notificações UI Desacopladas (`Contact.tsx`):** O *feedback* de submissão do formulário (Sucesso/Erro) renderiza numa camada *Toast* sobreposta, impulsionada por *keyframes* CSS na GPU. Isto evita o *reflow* do documento principal e não perturba o contexto WebGL subjacente.
 
-### DOM Layer (`src/components/dom`)
-* **CSS Architecture (`SharedPanels.css` & Scoped CSS):** Global extraction of UI patterns (Glassmorphism interfaces). Specific components like `Contact.css` utilize strict **CSS Grid** definitions to enforce absolute spatial determinism, isolating the DOM layout from the nested WebGL `<Canvas>` to completely eliminate *layout thrashing* and CLS.
-* **Navigation Overlay (`Navbar.tsx`):** Pure component, event-driven via *props*. Implements localized styling updates based on the globally lifted `hoveredSection` state without compromising sibling components.
-* **UI Panels:** High-performance functional components utilizing `React.memo` to block unnecessary cascading re-renders.
-  * O `Contact.tsx` implementa *parsing* defensivo da resposta do servidor (`JSON.parse` blindado) e controlo de concorrência com *debounce* rigoroso no input de dados para estabilizar os *dispatches* da FSM do WebGL.
-  * Heavy use of short-circuit evaluation (`&&`) guarantees deterministic DOM tree injection for optional data fields.
+## Próximos Passos / Roadmap
 
-## Next Steps / Roadmap
+* **Interpolação de Câmara (GSAP):** Intercetar o vetor `worldPosition` emitido pelo evento `onClick` nos modelos `<Planet />` para executar transições espaciais não-lineares determinísticas.
+* **Gestão do Evento de Fecho (Toggle):** Configurar o GSAP para escutar a anulação do estado `activeSection` e reverter suavemente a câmara para as coordenadas de origem global (`x: 0, y: 2, z: 20`).
 
-* **Camera Interpolation (GSAP):** Intercept the `worldPosition` vector emitted by clicking on the `<Planet />` models to calculate and execute non-linear spatial camera transitions.
-* **Close Event Management (Toggle):** Configure GSAP to listen for the `activeSection` state nullification and smoothly revert the camera to the global origin coordinates.
+## Execução Local & Deployment (Vercel CLI)
 
-## Local Execution & Deployment (Vercel CLI)
-
-A utilização do servidor nativo do Vite (`npm run dev`) está estritamente proibida, pois carece de capacidade para emular as *Serverless Functions* localizadas na diretoria `/api`. Para garantir a integridade entre o *frontend* e a API da Resend no ambiente de desenvolvimento, é imperativo o uso da **Vercel CLI**.
+A utilização do servidor nativo do Vite (`npm run dev`) é inaceitável, pois é incapaz de emular as *Serverless Functions* da diretoria `/api`. Para garantir a integridade entre o *frontend* e a API da Resend, o uso da **Vercel CLI** é obrigatório.
 
 ```bash
-# 1. Instalar dependências globais e de projeto
+# 1. Instalar dependências
 npm i -g vercel
 npm install
 
-# 2. Autenticar e ligar o projeto local ao Vercel
+# 2. Autenticar e ligar o projeto local
 vercel login
 vercel link
 
-# 3. Configurar Variáveis de Ambiente
-# Se já estiverem configuradas no Vercel, puxar diretamente:
+# 3. Sincronizar Variáveis de Ambiente
 vercel env pull .env.local
 
-# CASO CONTRÁRIO, criar manualmente o ficheiro .env.local na raiz com as credenciais do modo Sandbox:
-# RESEND_API_KEY=re_tua_chave_aqui
-# DESTINATION_EMAIL=o_teu_email_registado_no_resend@dominio.com
+# NOTA: O ambiente de desenvolvimento exige a configuração das credenciais Resend:
+# RESEND_API_KEY=re_chave_gerada
+# DESTINATION_EMAIL=email_autorizado_na_sandbox
 
-# 4. Iniciar o servidor de desenvolvimento unificado (Frontend + Serverless Backend)
+# 4. Iniciar o servidor de desenvolvimento unificado
 vercel dev

@@ -17,7 +17,7 @@ export interface PublicationRecord {
 
 export const PUBLICATION_DATA: PublicationRecord[] = [
 {
-    id:'addressing-personalized-vr',
+    id:'from-standardization-to-personalization',
     title:'From Standardization to Personalization: Navigating the Dual Demands of Adopting eXtended Reality for Rehabilitation Recovery',
     conference:'XR Salento 2026',
     status:'Under Review',

@@ -119,7 +119,7 @@ const App: React.FC = () => {
         dpr={[1, 2]}
       >
         <color attach="background" args={['#000000']} />
-        <Space />
+        <Space interactionEnabled={interactionEnabled} />
         
         <OrbitControls 
           makeDefault 
