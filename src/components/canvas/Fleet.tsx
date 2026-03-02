@@ -12,54 +12,53 @@ const SPACESHIP_MODELS = [
 
 SPACESHIP_MODELS.forEach((model) => useGLTF.preload(model));
 
+// Câmara em [0, 2, 20], FOV 45 — planetas num raio de ~8.5 unidades
+// Naves vivem no volume visível entre a câmara e o fundo do mapa
+const LIMIT_X = 12;   // cobre largura do mapa + margem
+const LIMIT_Y = 6;    // altura razoável acima/abaixo dos planetas
+const LIMIT_Z = 14;   // profundidade: da câmara até ao fundo do mapa
+const Z_OFFSET = 3;   // centro do volume deslocado para o meio da cena (z≈3)
+
 interface SpaceshipProps {
   modelPath: string;
   startPosition: THREE.Vector3;
-  targetPosition: THREE.Vector3;
-  speed: number;
+  startRotation: THREE.Euler;
+  velocity: THREE.Vector3;
   scale: number;
   interactionEnabled: boolean;
 }
 
-const Spaceship = memo(({ modelPath, startPosition, targetPosition, speed, scale, interactionEnabled }: SpaceshipProps) => {
+const Spaceship = memo(({ modelPath, startPosition, startRotation, velocity, scale, interactionEnabled }: SpaceshipProps) => {
   const ref = useRef<THREE.Group>(null);
   const { scene } = useGLTF(modelPath);
-
-  // Alinhamento inicial determinístico com base num vetor distante
-  useMemo(() => {
-    if (ref.current) {
-      ref.current.position.copy(startPosition);
-      ref.current.lookAt(targetPosition);
-    }
-  }, [startPosition, targetPosition]);
+  const initialized = useRef(false);
 
   useFrame((_, delta) => {
     if (!interactionEnabled || !ref.current) return;
 
-    // Translação estrita sobre o eixo Z local. A câmara nativa do Three.js é -Z.
-    ref.current.translateZ(-speed * delta); 
+    if (!initialized.current) {
+      ref.current.position.copy(startPosition);
+      ref.current.rotation.copy(startRotation);
+      initialized.current = true;
+    }
 
-    // Limites de Bounding Box expandidos (Wrap-Around). 
-    // Garante que o teletransporte ocorre fora do FOV da câmara.
-    const limitX = 40;
-    const limitY = 25;
-    const limitZ = 30;
+    ref.current.position.addScaledVector(velocity, delta);
 
     const pos = ref.current.position;
 
-    if (pos.x > limitX) pos.x = -limitX;
-    else if (pos.x < -limitX) pos.x = limitX;
+    if (pos.x > LIMIT_X) pos.x = -LIMIT_X;
+    else if (pos.x < -LIMIT_X) pos.x = LIMIT_X;
 
-    if (pos.y > limitY) pos.y = -limitY;
-    else if (pos.y < -limitY) pos.y = limitY;
+    if (pos.y > LIMIT_Y) pos.y = -LIMIT_Y;
+    else if (pos.y < -LIMIT_Y) pos.y = LIMIT_Y;
 
-    if (pos.z > limitZ) pos.z = -limitZ;
-    else if (pos.z < -limitZ) pos.z = limitZ;
+    // Wrap no Z centrado no mapa (entre z≈-11 e z≈17)
+    if (pos.z > LIMIT_Z + Z_OFFSET) pos.z = -LIMIT_Z + Z_OFFSET;
+    else if (pos.z < -LIMIT_Z + Z_OFFSET) pos.z = LIMIT_Z + Z_OFFSET;
   });
 
   return (
     <group ref={ref} scale={[scale, scale, scale]}>
-      {/* Correção forçada de exportação do Blender (180 graus no eixo Y) */}
       <Clone object={scene} castShadow rotation={[0, Math.PI, 0]} />
     </group>
   );
@@ -71,35 +70,41 @@ interface FleetProps {
 
 export const Fleet = memo(({ interactionEnabled }: FleetProps) => {
   const fleetData = useMemo(() => {
-    const NUM_SHIPS = 12; 
-    
+    const NUM_SHIPS = 20;
+
     return Array.from({ length: NUM_SHIPS }).map((_, i) => {
       const modelPath = SPACESHIP_MODELS[Math.floor(Math.random() * SPACESHIP_MODELS.length)];
-      
-      // Geração dispersa num paralelepípedo amplo que excede a câmara (Z=20)
+
+      // Spawn distribuído dentro do volume visível
       const startPosition = new THREE.Vector3(
-        (Math.random() - 0.5) * 70, // Largura máxima (X: -35 a 35)
-        (Math.random() - 0.5) * 40, // Altura máxima (Y: -20 a 20)
-        (Math.random() - 0.5) * 50  // Profundidade (Z: -25 a 25)
+        THREE.MathUtils.randFloatSpread(LIMIT_X * 2),
+        THREE.MathUtils.randFloatSpread(LIMIT_Y * 2),
+        THREE.MathUtils.randFloatSpread(LIMIT_Z * 2) + Z_OFFSET
       );
 
-      // Geração de um vetor direcional normalizado para garantir trajetórias estáveis
-      const direction = new THREE.Vector3(
-        Math.random() - 0.5,
-        (Math.random() - 0.5) * 0.4, // Amortecimento no eixo Y para evitar naves a viajar a pique para cima/baixo
-        Math.random() - 0.5
+      const speed = 2 + Math.random() * 3; // velocidade mais lenta para serem visíveis
+
+      // Direção aleatória ligeiramente achatada no Y (mais cinematográfico)
+      const dir = new THREE.Vector3(
+        THREE.MathUtils.randFloatSpread(2),
+        THREE.MathUtils.randFloatSpread(0.6),
+        THREE.MathUtils.randFloatSpread(2)
       ).normalize();
 
-      // Projeta o alvo num ponto infinitamente distante para a bússola do lookAt
-      const targetPosition = startPosition.clone().add(direction.multiplyScalar(100));
+      const velocity = dir.clone().multiplyScalar(speed);
 
-      return { 
-        id: `ship-${i}`, 
-        modelPath, 
-        startPosition, 
-        targetPosition,
-        speed: 2 + Math.random() * 3, // Velocidade aumentada para compensar a escala do novo mapa
-        scale: 0.05 + Math.random() * 0.03 // Escala reduzida para enquadrar na imensidão
+      // Rotação alinhada com a direção de voo
+      const dummy = new THREE.Object3D();
+      dummy.lookAt(dir.clone().negate());
+      const startRotation = new THREE.Euler().setFromQuaternion(dummy.quaternion);
+
+      return {
+        id: `ship-${i}`,
+        modelPath,
+        startPosition,
+        startRotation,
+        velocity,
+        scale: 0.06 + Math.random() * 0.05, // ligeiramente maiores
       };
     });
   }, []);
@@ -107,14 +112,14 @@ export const Fleet = memo(({ interactionEnabled }: FleetProps) => {
   return (
     <group name="spaceship-fleet">
       {fleetData.map((data) => (
-        <Spaceship 
-          key={data.id} 
-          modelPath={data.modelPath} 
-          startPosition={data.startPosition} 
-          targetPosition={data.targetPosition}
-          speed={data.speed}
+        <Spaceship
+          key={data.id}
+          modelPath={data.modelPath}
+          startPosition={data.startPosition}
+          startRotation={data.startRotation}
+          velocity={data.velocity}
           scale={data.scale}
-          interactionEnabled={interactionEnabled} 
+          interactionEnabled={interactionEnabled}
         />
       ))}
     </group>
