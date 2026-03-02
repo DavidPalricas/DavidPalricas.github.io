@@ -9,7 +9,7 @@ This repository contains the source code for an interactive 3D portfolio, design
 * **Rendering Engine:** Three.js via React Three Fiber (R3F). R3F acts as a reconciler, declaratively managing the allocation and destruction of geometry and materials in VRAM in sync with the React component lifecycle, preventing *memory leaks*.
 * **Animation & Easing:** GSAP (GreenSock). Manages the temporal interpolation of the camera and trajectories independent of framerate, replacing raw `requestAnimationFrame` math with standardized non-linear *easing* functions.
 * **3D Asset Pipeline:** Models exported in `.glb`, optimized with spatial compression (Draco/Meshopt). Textures use KTX2 (Basis Universal) compression targeted at the GPU, drastically reducing network *payload* and *parsing* times.
-* **Infrastructure & Backend:** Vercel. Static frontend hosting coupled with Serverless Functions (`/api` directory). The contact form integrates the **Resend** transactional API in an isolated environment, bypassing dedicated servers and unnecessary latency.
+* **Infrastructure & Backend:** Vercel. Static frontend hosting coupled with Serverless Functions (`/api` directory). O formulário de contacto comunica via `fetch` assíncrono com o *endpoint* `/api/contact`, que utiliza o SDK da **Resend** em ambiente isolado. Devido à ausência de um domínio de nível superior (TLD) dedicado, a infraestrutura de email opera estritamente no modo *Sandbox* da Resend, possuindo um remetente estático (`onboarding@resend.dev`) e permitindo o envio de *payloads* exclusivamente para o email do administrador.
 
 ## Data Structure & Current Implementation
 
@@ -33,7 +33,7 @@ This repository contains the source code for an interactive 3D portfolio, design
 * **CSS Architecture (`SharedPanels.css` & Scoped CSS):** Global extraction of UI patterns (Glassmorphism interfaces). Specific components like `Contact.css` utilize strict **CSS Grid** definitions to enforce absolute spatial determinism, isolating the DOM layout from the nested WebGL `<Canvas>` to completely eliminate *layout thrashing* and CLS.
 * **Navigation Overlay (`Navbar.tsx`):** Pure component, event-driven via *props*. Implements localized styling updates based on the globally lifted `hoveredSection` state without compromising sibling components.
 * **UI Panels:** High-performance functional components utilizing `React.memo` to block unnecessary cascading re-renders.
-  * *Debounce* logic applied to keyboard input (`Contact.tsx`) to optimize UI thread scheduling and stabilize FSM dispatches.
+  * O `Contact.tsx` implementa *parsing* defensivo da resposta do servidor (`JSON.parse` blindado) e controlo de concorrência com *debounce* rigoroso no input de dados para estabilizar os *dispatches* da FSM do WebGL.
   * Heavy use of short-circuit evaluation (`&&`) guarantees deterministic DOM tree injection for optional data fields.
 
 ## Next Steps / Roadmap
@@ -41,16 +41,26 @@ This repository contains the source code for an interactive 3D portfolio, design
 * **Camera Interpolation (GSAP):** Intercept the `worldPosition` vector emitted by clicking on the `<Planet />` models to calculate and execute non-linear spatial camera transitions.
 * **Close Event Management (Toggle):** Configure GSAP to listen for the `activeSection` state nullification and smoothly revert the camera to the global origin coordinates.
 
-## Local Execution & Deployment
+## Local Execution & Deployment (Vercel CLI)
 
-To run the application in a local development environment, it is imperative to configure the environment variables responsible for the email *gateway*.
+A utilização do servidor nativo do Vite (`npm run dev`) está estritamente proibida, pois carece de capacidade para emular as *Serverless Functions* localizadas na diretoria `/api`. Para garantir a integridade entre o *frontend* e a API da Resend no ambiente de desenvolvimento, é imperativo o uso da **Vercel CLI**.
 
 ```bash
-# 1. Install project dependencies
+# 1. Instalar dependências globais e de projeto
+npm i -g vercel
 npm install
 
-# 2. Configure the environment (create a .env.local file in the root)
-# Insert: RESEND_API_KEY=your_production_key_here
+# 2. Autenticar e ligar o projeto local ao Vercel
+vercel login
+vercel link
 
-# 3. Start local server with Hot Module Replacement
-npm run dev
+# 3. Configurar Variáveis de Ambiente
+# Se já estiverem configuradas no Vercel, puxar diretamente:
+vercel env pull .env.local
+
+# CASO CONTRÁRIO, criar manualmente o ficheiro .env.local na raiz com as credenciais do modo Sandbox:
+# RESEND_API_KEY=re_tua_chave_aqui
+# DESTINATION_EMAIL=o_teu_email_registado_no_resend@dominio.com
+
+# 4. Iniciar o servidor de desenvolvimento unificado (Frontend + Serverless Backend)
+vercel dev
