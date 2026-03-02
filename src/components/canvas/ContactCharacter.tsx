@@ -1,6 +1,7 @@
 // src/components/canvas/ContactCharacter.tsx
-import React, {useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
+import * as THREE from 'three';
 import { CharacterAction } from '../../types/contact';
 
 interface ContactCharacterProps {
@@ -15,21 +16,34 @@ export const ContactCharacter: React.FC<ContactCharacterProps> = React.memo(({ c
   useEffect(() => {
     const currentAction = actions[currentState];
 
- 
     if (!currentAction) {
       console.error(`Animação '${currentState}' ausente no modelo GLTF.`);
       return;
     }
 
+    // Reset obrigatório para garantir que a animação recomeça do zero ao transitar
+    currentAction.reset();
+
+    // Lógica de controlo de máquina de estados de animação
+    if (currentState === CharacterAction.ERROR) {
+      // Bloqueia o loop para animações terminais (Death/Error) e retém o último frame
+      currentAction.setLoop(THREE.LoopOnce, 1);
+      currentAction.clampWhenFinished = true;
+    } else {
+      // Restaura o comportamento padrão (loop infinito) para estados como IDLE e RUNNING
+      currentAction.setLoop(THREE.LoopRepeat, Infinity);
+      currentAction.clampWhenFinished = false;
+    }
+
     // Interpolação suave (blending) de 0.2 segundos entre estados
-    currentAction.reset().fadeIn(0.2).play();
+    currentAction.fadeIn(0.2).play();
 
     return () => {
       currentAction.fadeOut(0.2);
     };
   }, [currentState, actions]);
 
- return (
+  return (
     <primitive 
       object={scene} 
       // Ajusta o Y negativo para centrar o centro de massa do modelo na vista
@@ -41,3 +55,8 @@ export const ContactCharacter: React.FC<ContactCharacterProps> = React.memo(({ c
     />
   );
 });
+
+// DIRETIVA DE OTIMIZAÇÃO CRÍTICA:
+// Força o browser a alocar o modelo na cache de suspense assim que o módulo JS é processado,
+// eliminando o tempo de espera visual quando a aba de contacto é aberta.
+useGLTF.preload('/models/contact_character.glb');

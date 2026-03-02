@@ -1,34 +1,40 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 
 interface PlanetProps {
-  id: string; // Identificador obrigatório para ligar à secção do DOM
+  id: string; 
   name?: string; 
   position: [number, number, number];
   onClick: (targetPosition: THREE.Vector3) => void;
-  onHoverStateChange: (id: string | null) => void; // Emissor para a Navbar
+  onHoverStateChange: (id: string | null) => void;
+  interactionEnabled: boolean; // Prop de controlo estrito
 }
 
 const BASE_PATH = '/models/planets/';
 
-export const Planet: React.FC<PlanetProps> = ({ id, name = 'default', position, onClick, onHoverStateChange }) => {
+export const Planet: React.FC<PlanetProps> = ({ id, name = 'default', position, onClick, onHoverStateChange, interactionEnabled }) => {
   const modelPath = `${BASE_PATH}${name}.glb`;
   const { scene } = useGLTF(modelPath);
   const planetRef = useRef<THREE.Group>(null);
   
-  // Estado local retido apenas para o gatilho lógico, não dita a animação final
   const [isHovered, setIsHovered] = useState(false);
 
-  // Interpolação matemática direta no Render Loop (Frame a Frame)
+  // Força o reset do cursor e do estado se a interação for desativada enquanto o ponteiro está sobre a malha
+  useEffect(() => {
+    if (!interactionEnabled && isHovered) {
+      setIsHovered(false);
+      document.body.style.cursor = 'auto';
+    }
+  }, [interactionEnabled, isHovered]);
+
   useFrame((_, delta) => {
     if (!planetRef.current) return;
     
-    // Escala alvo: 1.2 quando em hover, 1.0 no estado natural
-    const targetScale = isHovered ? 1.2 : 1.0;
+    // Se a interação estiver inibida, o alvo vetorial é forçado a 1.0 absoluto
+    const targetScale = (isHovered && interactionEnabled) ? 1.2 : 1.0;
     
-    // LERP (Linear Interpolation) com fator de tempo (delta * 10) garante fluidez independente dos FPS
     planetRef.current.scale.lerp(
       new THREE.Vector3(targetScale, targetScale, targetScale), 
       delta * 10
@@ -36,20 +42,23 @@ export const Planet: React.FC<PlanetProps> = ({ id, name = 'default', position, 
   });
 
   const handlePointerOver = (e: ThreeEvent<PointerEvent>) => {
+    if (!interactionEnabled) return;
     e.stopPropagation();
     document.body.style.cursor = 'pointer';
     setIsHovered(true);
-    onHoverStateChange(id); // Propaga para o DOM
+    onHoverStateChange(id); 
   };
 
   const handlePointerOut = (e: ThreeEvent<PointerEvent>) => {
+    if (!interactionEnabled) return;
     e.stopPropagation();
     document.body.style.cursor = 'auto';
     setIsHovered(false);
-    onHoverStateChange(null); // Limpa o estado no DOM
+    onHoverStateChange(null); 
   };
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
+    if (!interactionEnabled) return;
     e.stopPropagation();
     if (planetRef.current) {
       const worldPosition = new THREE.Vector3();

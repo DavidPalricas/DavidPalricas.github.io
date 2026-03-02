@@ -26,7 +26,7 @@ export const GAMEJAM_DATA: GameJamRecord[] = [
     jamLink: 'https://globalgamejam.org/games/2026/lultime-danse-1',
     websiteLink: 'https://davidpalricas.itch.io/lultime-danse',
     demoLink: '',
-    sourceLink: ''
+    sourceLink: 'https://github.com/DavidPalricas/L-Ultime-Danse-GGJ2026'
   },
   {
     id: 'global-game-jam-25',

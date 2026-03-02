@@ -86,6 +86,55 @@ textarea.glass-input {
   border-radius: 12px;
   /* Força a criação de uma Composite Layer isolada na GPU */
   transform: translateZ(0);
+  overflow: hidden; /* Garante que a notificação não transborda do container da Canvas */
+}
+
+/* =========================================
+   UI NOTIFICATION (TOAST)
+========================================= */
+.notification-popup {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: slideDownToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  pointer-events: none; /* Não bloquear clicks na Canvas */
+}
+
+.notification-popup.success {
+  background: rgba(46, 213, 115, 0.2);
+  border: 1px solid rgba(46, 213, 115, 0.4);
+}
+
+.notification-popup.success svg {
+  color: #2ed573;
+}
+
+.notification-popup.error {
+  background: rgba(255, 71, 87, 0.2);
+  border: 1px solid rgba(255, 71, 87, 0.4);
+}
+
+.notification-popup.error svg {
+  color: #ff4757;
+}
+
+@keyframes slideDownToast {
+  0% { opacity: 0; transform: translate(-50%, -20px); }
+  100% { opacity: 1; transform: translate(-50%, 0); }
 }
 
 /* Media Query para reflow determinístico em dispositivos móveis */

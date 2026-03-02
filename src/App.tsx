@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { Suspense, useState, useCallback } from 'react';
+import React, { Suspense, useState, useCallback, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -17,8 +17,26 @@ import './components/dom/NavBarElements/NavBarElement.css';
 
 const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
-  // Estado isolado para a propagação do hover do WebGL para o DOM
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
+  
+  // Estado rigoroso para monitorização do foco do sistema operativo
+  const [isWindowFocused, setIsWindowFocused] = useState<boolean>(true);
+
+  useEffect(() => {
+    const handleFocus = () => setIsWindowFocused(true);
+    const handleBlur = () => {
+      setIsWindowFocused(false);
+      setHoveredSection(null); // Limpa resíduos de hover no DOM forçadamente
+    };
+
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('blur', handleBlur);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('blur', handleBlur);
+    };
+  }, []);
 
   const handleNavigation = useCallback((sectionId: string | null, worldPosition?: THREE.Vector3) => {
     setActiveSection(prev => {
@@ -39,6 +57,9 @@ const App: React.FC = () => {
     });
   }, []);
 
+  // Máquina de estados boleana para oclusão de Raycast no WebGL
+  const interactionEnabled = activeSection === null && isWindowFocused;
+
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
       
@@ -50,13 +71,25 @@ const App: React.FC = () => {
           onNavigate={handleNavigation} 
         />
         
-        {/* Renderização Condicional de Modais */}
-        {activeSection === 'about' && <About onClose={() => handleNavigation(null)} />}
-        {activeSection === 'experience' && <Experience onClose={() => handleNavigation(null)} />}
-        {activeSection === 'projects' && <Projects onClose={() => handleNavigation(null)} />}
-        {activeSection === 'game-jams' && <GameJams onClose={() => handleNavigation(null)} />}
-        {activeSection === 'publications' && <Publications onClose={() => handleNavigation(null)} />}
-        {activeSection === 'contact' && <Contact onClose={() => handleNavigation(null)} />}
+        {/* Renderização Persistente (GPU Warm-up). Os componentes nunca são destruídos, apenas ocultados via hardware acceleration. */}
+        <div className={`panel-wrapper ${activeSection === 'about' ? 'visible' : 'hidden'}`}>
+          <About onClose={() => handleNavigation(null)} />
+        </div>
+        <div className={`panel-wrapper ${activeSection === 'experience' ? 'visible' : 'hidden'}`}>
+          <Experience onClose={() => handleNavigation(null)} />
+        </div>
+        <div className={`panel-wrapper ${activeSection === 'projects' ? 'visible' : 'hidden'}`}>
+          <Projects onClose={() => handleNavigation(null)} />
+        </div>
+        <div className={`panel-wrapper ${activeSection === 'game-jams' ? 'visible' : 'hidden'}`}>
+          <GameJams onClose={() => handleNavigation(null)} />
+        </div>
+        <div className={`panel-wrapper ${activeSection === 'publications' ? 'visible' : 'hidden'}`}>
+          <Publications onClose={() => handleNavigation(null)} />
+        </div>
+        <div className={`panel-wrapper ${activeSection === 'contact' ? 'visible' : 'hidden'}`}>
+          <Contact onClose={() => handleNavigation(null)} />
+        </div>
         
         {/* Assinatura / Copyright */}
         <footer style={{ 
@@ -88,14 +121,13 @@ const App: React.FC = () => {
         <color attach="background" args={['#000000']} />
         <Space />
         
-        {/* Restrição total de Zoom e Pan para manter a integridade vetorial da câmara para o GSAP */}
-       <OrbitControls 
+        <OrbitControls 
           makeDefault 
           enableZoom={false} 
           enablePan={false} 
-          enableRotate={false} /* Anula completamente o input do utilizador */
-          autoRotate={activeSection === null} /* Roda estritamente no estado IDLE global */
-          autoRotateSpeed={0.2} /* Velocidade cinemática lenta para evitar motion sickness */
+          enableRotate={false} 
+          autoRotate={activeSection === null} 
+          autoRotateSpeed={0.2} 
         />
 
         <Suspense fallback={null}>
@@ -107,6 +139,7 @@ const App: React.FC = () => {
               position={section.position} 
               onClick={(pos) => handleNavigation(section.id, pos)} 
               onHoverStateChange={setHoveredSection}
+              interactionEnabled={interactionEnabled}
             />
           ))}
         </Suspense>

@@ -1,4 +1,31 @@
 /* =========================================
+   CONTROLO DE ESTADO DE RENDERIZAÇÃO GPU (WARM-UP)
+========================================= */
+.panel-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* Oclusão estrita no compositor da GPU */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  
+  transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              visibility 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 20;
+}
+
+.panel-wrapper.visible {
+  opacity: 1;
+  visibility: visible;
+  /* Reativação da árvore do DOM subjacente para interação */
+  pointer-events: auto; 
+}
+
+/* =========================================
    BASE PANELS & GLASSMORPHISM
 ========================================= */
 .about-panel, 
@@ -6,11 +33,17 @@
 .jam-panel, 
 .project-panel {
   position: absolute;
-  top: 50%;
+  /* Ancoragem rígida: 2rem (top da navbar) + ~4.4rem (altura estimada da navbar) + 1.6rem (margem de respiro) */
+  top: 8rem; 
   left: 10%;
-  transform: translateY(-50%);
+  
+  /* Remoção da translação vertical que causava a colisão geométrica */
+  transform: none; 
+  
   width: min(90vw, 850px);
-  max-height: 85vh;
+  
+  /* Cálculo estrito da altura máxima: 100% da viewport menos o topo (8rem) e uma margem inferior segura (2rem) */
+  max-height: calc(100vh - 10rem); 
   overflow-y: auto;
   
   background: var(--glass-bg);
@@ -24,7 +57,9 @@
   color: #fff;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   pointer-events: auto;
-  will-change: transform, opacity;
+  
+  /* Atualização das propriedades aceleradas por hardware */
+  will-change: opacity;
 }
 
 /* Scrollbars Comuns */
@@ -58,13 +93,20 @@
 
 .close-button {
   position: absolute;
-  top: 2.5rem;
-  right: 2.5rem;
+  /* Redução rigorosa da margem para ancorar ao canto superior direito */
+  top: 1.2rem;
+  right: 1.2rem;
+  
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  padding: 0.5rem;
+  
+  /* Aumento do tamanho visual do ícone */
+  font-size: 1.5rem;
+  /* Incremento do padding para maximizar a área de clique (objetivo: >44x44px) */
+  padding: 0.75rem;
+  
   transition: color 0.2s ease, transform 0.2s ease;
   z-index: 10;
 }

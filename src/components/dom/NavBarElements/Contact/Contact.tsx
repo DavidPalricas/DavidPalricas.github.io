@@ -10,9 +10,18 @@ interface ContactProps {
   onClose: () => void;
 }
 
+type NotificationState = {
+  visible: boolean;
+  type: 'success' | 'error';
+  message: string;
+} | null;
+
 export const Contact: React.FC<ContactProps> = ({ onClose }) => {
   const [characterState, setCharacterState] = useState<CharacterAction>(CharacterAction.IDLE);
+  const [notification, setNotification] = useState<NotificationState>(null);
+  
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const notificationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleTyping = useCallback(() => {
     if (characterState === CharacterAction.RUNNING) return; 
@@ -32,14 +41,15 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
     e.preventDefault();
     
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
     
+    setNotification(null);
     setCharacterState(CharacterAction.RUNNING);
 
     const formData = new FormData(e.currentTarget);
     const payload = Object.fromEntries(formData.entries());
 
-
-    const timeToResetCharacter = 3000;
+    const timeToResetCharacter = 4000;
 
     try {
       const response = await fetch('/api/contact', {
@@ -57,18 +67,22 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
       }
       
       setCharacterState(CharacterAction.SUCCESS);
+      setNotification({ visible: true, type: 'success', message: 'Email Sent Successfully' });
       
-      setTimeout(() => {
+      notificationTimeoutRef.current = setTimeout(() => {
         setCharacterState(CharacterAction.IDLE);
+        setNotification(null);
         (e.target as HTMLFormElement).reset();
       }, timeToResetCharacter);
 
     } catch (error) {
       console.error('Falha crítica no envio:', error);
       setCharacterState(CharacterAction.ERROR); 
+      setNotification({ visible: true, type: 'error', message: 'Error sending email try later' });
 
-       setTimeout(() => {
+      notificationTimeoutRef.current = setTimeout(() => {
         setCharacterState(CharacterAction.IDLE);
+        setNotification(null);
       }, timeToResetCharacter);
     }
   };
@@ -81,12 +95,12 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
         </svg>
       </button>
 
-      <h2 className="section-title">Get in Touch</h2>
+      <h2 className="section-title">Contact Me</h2>
 
       <div className="contact-layout">
         <form className="contact-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name">Name <span className="required-asterisk">*</span></label>
+            <label htmlFor="name">Your Name <span className="required-asterisk">*</span></label>
             <input 
               type="text" 
               id="name" 
@@ -98,7 +112,7 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email <span className="required-asterisk">*</span></label>
+            <label htmlFor="email">Your Email <span className="required-asterisk">*</span></label>
             <input 
               type="email" 
               id="email" 
@@ -137,6 +151,23 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
             <Environment preset="city" />
             <ContactCharacter currentState={characterState} />
           </Canvas>
+          
+          {/* Overlay de Notificação UI Desacoplada do DOM de rendering 3D */}
+          {notification?.visible && (
+            <div className={`notification-popup ${notification.type}`}>
+              {notification.type === 'success' ? (
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2.5" fill="none">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2.5" fill="none">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="12"></line>
+                </svg>
+              )}
+              <span>{notification.message}</span>
+            </div>
+          )}
         </div>
       </div>
     </section>
