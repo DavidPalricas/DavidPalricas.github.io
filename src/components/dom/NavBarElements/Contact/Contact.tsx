@@ -14,9 +14,8 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
   const [characterState, setCharacterState] = useState<CharacterAction>(CharacterAction.IDLE);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Lógica de Debounce: Volta a IDLE após 800ms sem escrever
   const handleTyping = useCallback(() => {
-    if (characterState === CharacterAction.RUNNING) return; // Bloqueia interrupções durante o envio
+    if (characterState === CharacterAction.RUNNING) return; 
 
     setCharacterState(CharacterAction.NODDING);
 
@@ -32,31 +31,45 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // Limpa timeouts pendentes
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     
-    // Altera para o estado de corrida
     setCharacterState(CharacterAction.RUNNING);
 
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    const payload = Object.fromEntries(formData.entries());
+
+
+    const timeToResetCharacter = 3000;
 
     try {
-      // Inserir aqui a integração real com a Resend API (referenciada no teu DEV.md)
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulação de latência de rede
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Falha na submissão da API de contacto.');
+      }
       
-      console.log('Dados submetidos:', data);
       setCharacterState(CharacterAction.SUCCESS);
       
-      // Opcional: Reset ao formulário e voltar a IDLE após sucesso
       setTimeout(() => {
         setCharacterState(CharacterAction.IDLE);
         (e.target as HTMLFormElement).reset();
-      }, 3000);
+      }, timeToResetCharacter);
 
     } catch (error) {
-      console.error('Falha no envio:', error);
-      setCharacterState(CharacterAction.IDLE); // Reverte em caso de erro
+      console.error('Falha crítica no envio:', error);
+      setCharacterState(CharacterAction.ERROR); 
+
+       setTimeout(() => {
+        setCharacterState(CharacterAction.IDLE);
+      }, timeToResetCharacter);
     }
   };
 
@@ -118,7 +131,6 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
         </form>
 
         <div className="contact-canvas-container">
-          {/* Canvas isolado para garantir que a renderização do DOM não bloqueia o WebGL */}
           <Canvas camera={{ position: [0, 1, 5], fov: 45 }}>
             <ambientLight intensity={0.5} />
             <directionalLight position={[10, 10, 10]} intensity={1} />
