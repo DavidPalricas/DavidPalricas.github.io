@@ -12,39 +12,39 @@ const SPACESHIP_MODELS = [
 
 SPACESHIP_MODELS.forEach((model) => useGLTF.preload(model));
 
-// Câmara em [0, 2, 20], FOV 45 — planetas num raio de ~8.5 unidades
-// Naves vivem no volume visível entre a câmara e o fundo do mapa
-const LIMIT_X = 12;   // cobre largura do mapa + margem
-const LIMIT_Y = 6;    // altura razoável acima/abaixo dos planetas
-const LIMIT_Z = 14;   // profundidade: da câmara até ao fundo do mapa
-const Z_OFFSET = 3;   // centro do volume deslocado para o meio da cena (z≈3)
+const LIMIT_X = 12;
+const LIMIT_Y = 6;
+const LIMIT_Z = 14;
+const Z_OFFSET = 3;
 
 interface SpaceshipProps {
   modelPath: string;
   startPosition: THREE.Vector3;
   startRotation: THREE.Euler;
-  velocity: THREE.Vector3;
+  speed: number;
   scale: number;
   interactionEnabled: boolean;
 }
 
-const Spaceship = memo(({ modelPath, startPosition, startRotation, velocity, scale, interactionEnabled }: SpaceshipProps) => {
-  const ref = useRef<THREE.Group>(null);
+const Spaceship = memo(({ modelPath, startPosition, startRotation, speed, scale, interactionEnabled }: SpaceshipProps) => {
+  // pivô: controla posição e orientação de voo
+  const pivotRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF(modelPath);
   const initialized = useRef(false);
 
   useFrame((_, delta) => {
-    if (!interactionEnabled || !ref.current) return;
+    if (!interactionEnabled || !pivotRef.current) return;
 
     if (!initialized.current) {
-      ref.current.position.copy(startPosition);
-      ref.current.rotation.copy(startRotation);
+      pivotRef.current.position.copy(startPosition);
+      pivotRef.current.rotation.copy(startRotation);
       initialized.current = true;
     }
 
-    ref.current.position.addScaledVector(velocity, delta);
+    // Mover o pivô no seu próprio eixo Z local — a nave voa sempre para a sua frente
+    pivotRef.current.translateZ(speed * delta);
 
-    const pos = ref.current.position;
+    const pos = pivotRef.current.position;
 
     if (pos.x > LIMIT_X) pos.x = -LIMIT_X;
     else if (pos.x < -LIMIT_X) pos.x = LIMIT_X;
@@ -52,59 +52,52 @@ const Spaceship = memo(({ modelPath, startPosition, startRotation, velocity, sca
     if (pos.y > LIMIT_Y) pos.y = -LIMIT_Y;
     else if (pos.y < -LIMIT_Y) pos.y = LIMIT_Y;
 
-    // Wrap no Z centrado no mapa (entre z≈-11 e z≈17)
     if (pos.z > LIMIT_Z + Z_OFFSET) pos.z = -LIMIT_Z + Z_OFFSET;
     else if (pos.z < -LIMIT_Z + Z_OFFSET) pos.z = LIMIT_Z + Z_OFFSET;
   });
 
   return (
-    <group ref={ref} scale={[scale, scale, scale]}>
-      <Clone object={scene} castShadow rotation={[0, Math.PI, 0]} />
+    // Pivô invisível — define direção e posição
+    <group ref={pivotRef}>
+      {/* Modelo filho — corrige apenas o offset visual do GLB sem interferir no voo */}
+      <group scale={[scale, scale, scale]}>
+        <Clone object={scene} castShadow rotation={[0, 0, 0]} />
+      </group>
     </group>
   );
 });
 
-interface FleetProps {
+interface SpaceShipsProps {
   interactionEnabled: boolean;
 }
 
-export const Fleet = memo(({ interactionEnabled }: FleetProps) => {
+export const SpaceShips = memo(({ interactionEnabled }: SpaceShipsProps) => {
   const fleetData = useMemo(() => {
     const NUM_SHIPS = 20;
 
     return Array.from({ length: NUM_SHIPS }).map((_, i) => {
       const modelPath = SPACESHIP_MODELS[Math.floor(Math.random() * SPACESHIP_MODELS.length)];
 
-      // Spawn distribuído dentro do volume visível
       const startPosition = new THREE.Vector3(
         THREE.MathUtils.randFloatSpread(LIMIT_X * 2),
         THREE.MathUtils.randFloatSpread(LIMIT_Y * 2),
         THREE.MathUtils.randFloatSpread(LIMIT_Z * 2) + Z_OFFSET
       );
 
-      const speed = 2 + Math.random() * 3; // velocidade mais lenta para serem visíveis
-
-      // Direção aleatória ligeiramente achatada no Y (mais cinematográfico)
-      const dir = new THREE.Vector3(
-        THREE.MathUtils.randFloatSpread(2),
-        THREE.MathUtils.randFloatSpread(0.6),
-        THREE.MathUtils.randFloatSpread(2)
-      ).normalize();
-
-      const velocity = dir.clone().multiplyScalar(speed);
-
-      // Rotação alinhada com a direção de voo
-      const dummy = new THREE.Object3D();
-      dummy.lookAt(dir.clone().negate());
-      const startRotation = new THREE.Euler().setFromQuaternion(dummy.quaternion);
+      // Rotação do pivô = direção de voo. O modelo segue automaticamente.
+      const startRotation = new THREE.Euler(
+        THREE.MathUtils.randFloatSpread(Math.PI),
+        THREE.MathUtils.randFloat(0, Math.PI * 2),
+        THREE.MathUtils.randFloatSpread(Math.PI / 2)
+      );
 
       return {
         id: `ship-${i}`,
         modelPath,
         startPosition,
         startRotation,
-        velocity,
-        scale: 0.06 + Math.random() * 0.05, // ligeiramente maiores
+        speed: 2 + Math.random() * 3,
+        scale: 0.06 + Math.random() * 0.05,
       };
     });
   }, []);
@@ -117,7 +110,7 @@ export const Fleet = memo(({ interactionEnabled }: FleetProps) => {
           modelPath={data.modelPath}
           startPosition={data.startPosition}
           startRotation={data.startRotation}
-          velocity={data.velocity}
+          speed={data.speed}
           scale={data.scale}
           interactionEnabled={interactionEnabled}
         />

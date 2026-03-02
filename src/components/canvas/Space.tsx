@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Stars } from '@react-three/drei';
-import { Fleet } from './Fleet';
+import { SpaceShips } from './SpaceShips';
 
 // Tipagem estrita
 interface SpaceProps {
@@ -15,7 +15,7 @@ const Space = ({ interactionEnabled }: SpaceProps) => {
       <Stars radius={80} depth={50} count={7000} factor={4} saturation={0} fade speed={1.5} />
       
       {/* Propagação de estado para suspensão vetorial */}
-      <Fleet interactionEnabled={interactionEnabled} />
+      <SpaceShips interactionEnabled={interactionEnabled} />
     </group>
   );
 };
