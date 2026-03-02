@@ -9,7 +9,6 @@ Este repositório contém o código-fonte de um portefólio 3D interativo, conce
 * **Motor de Renderização:** Three.js via React Three Fiber (R3F). O R3F opera como um reconciliador, gerindo de forma declarativa a alocação e destruição de geometria na VRAM.
 * **Animação & Easing:** GSAP (GreenSock). Substitui a matemática manual de `requestAnimationFrame` por funções de interpolação não-linear para transições de câmara.
 * **Pipeline de Assets 3D:** Modelos em formato `.glb`. Utilização mandatória da diretiva `useGLTF.preload` ao nível do módulo para forçar o *caching* na RAM antes da instanciação do componente, eliminando a latência visual (*Jank*) durante a montagem de nós.
-* **Infraestrutura & Backend:** Vercel. Alojamento estático acoplado a *Serverless Functions* (`/api`). A API de contacto comunica via `fetch` assíncrono com o endpoint `/api/contact`, delegando o *payload* ao SDK da **Resend** em ambiente de *Sandbox*.
 
 ## Estrutura de Dados & Implementação Atual
 
@@ -19,14 +18,15 @@ Este repositório contém o código-fonte de um portefólio 3D interativo, conce
 
 ### Camada WebGL (`src/components/canvas`)
 * **Geometria Orbital Determinística:** Os vetores planetários são distribuídos utilizando projeção trigonométrica estrita ($r=8.5$, $\theta = n \cdot 60^\circ$). Isto estabiliza a disposição em anel, prevenindo distorção de FOV da câmara.
+* **Sistema de Frota Espacial (`SpaceShips.tsx`):** Gestão de entidades dinâmicas recorrendo a um sistema matemático de *Wrap-around*. O modelo instancia as posições e rotações com base em `THREE.Euler` aleatórios (`MathUtils.randFloatSpread`) e utiliza o translação direta sobre o eixo Z local do pivô de voo (`translateZ()`), mitigando o uso exaustivo de matemática de rotação vetorial por *frame*. As colisões de fronteira reciclam coordenadas instantaneamente nos antípodas cartesianos para um fluxo contínuo sem realocação de memória na *Garbage Collector*.
 * **Lockdown da Câmara:** O `OrbitControls` opera como uma máquina de estados passiva. A auto-rotação é suspensa no milissegundo em que uma secção é ativada (`activeSection`), congelando o sistema de coordenadas para entregar vetores limpos ao GSAP.
 * **Interpolação no Render Loop (`Planet.tsx`):** A escala de *hover* utiliza `lerp` sincronizado com o *delta time* diretamente no `useFrame`. Isto muta a matriz 3D contornando o ciclo de vida do React, garantindo *framerate* constante.
-* **FSM de Animação de Personagem (`ContactCharacter.tsx`):** O controlo de esqueletos 3D (Bones) é governado por uma Máquina de Estados Finitos (`enum`). Animações terminais (como `ERROR` ou `SUCCESS`) sofrem alteração explícita do modo de repetição na API do Three.js (`THREE.LoopOnce` e `clampWhenFinished = true`), evitando comportamentos em *loop* indesejados originados pelas definições de exportação do ficheiro GLTF.
+* **FSM de Animação de Personagem (`ContactCharacter.tsx`):** O controlo de esqueletos 3D (Bones) é governado por uma Máquina de Estados Finitos (`enum`). Animações terminais sofrem alteração explícita do modo de repetição na API do Three.js (`THREE.LoopOnce` e `clampWhenFinished = true`), evitando repetições indesejadas originadas pelo ficheiro base.
 
 ### Camada DOM (`src/components/dom`)
-* **Isolamento Espacial Absoluto:** Painéis UI utilizam ancoragem geométrica rígida (`top: 8rem` e `max-height: calc(100vh - 10rem)`) no lugar de translações dinâmicas de eixo (`translateY`). Isto elimina colisões com o *offset* da Navbar e garante a integridade da *scrollbar* interna sem causar *layout thrashing*.
-* **Integridade do Flexbox (`Navbar.css`):** Elementos de navegação possuem constrangimento estrito de fluxo de texto (`white-space: nowrap`), forçando o eixo X do contentor *Flex* a recalcular a sua expansão a partir do centro sem quebrar as grelhas em resoluções atípicas.
-* **Notificações UI Desacopladas (`Contact.tsx`):** O *feedback* de submissão do formulário (Sucesso/Erro) renderiza numa camada *Toast* sobreposta, impulsionada por *keyframes* CSS na GPU. Isto evita o *reflow* do documento principal e não perturba o contexto WebGL subjacente.
+* **Isolamento Espacial Absoluto:** Painéis UI utilizam ancoragem geométrica rígida (`top: 8rem` e `max-height: calc(100vh - 10rem)`) no lugar de translações dinâmicas de eixo. Isto elimina colisões com o *offset* da Navbar e garante a integridade da *scrollbar* interna sem causar *layout thrashing*.
+* **Integridade do Flexbox (`Navbar.css` e Footer):** O rodapé e elementos de navegação operam sob restrições espaciais transversais utilizando contentores *Flex* para prevenir desalinhamento de créditos (Quaternius, Poly Pizza) sob redimensionamento agressivo.
+* **Notificações UI Desacopladas (`Contact.tsx`):** O *feedback* de submissão do formulário renderiza numa camada *Toast* sobreposta, impulsionada por *keyframes* CSS na GPU.
 
 ## Próximos Passos / Roadmap
 

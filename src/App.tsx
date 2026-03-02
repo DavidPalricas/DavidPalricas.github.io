@@ -91,18 +91,23 @@ const App: React.FC = () => {
           <Contact onClose={() => handleNavigation(null)} />
         </div>
         
-        {/* Assinatura / Copyright */}
+        {/* Assinatura / Copyright / Créditos */}
         <footer style={{ 
           position: 'absolute', 
           bottom: '2rem', 
-          right: '2.5rem', 
+          left: '2.5rem',
+          right: '2.5rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           fontSize: '0.85rem', 
           color: 'rgba(255, 255, 255, 0.5)', 
           fontFamily: "'Inter', system-ui, sans-serif",
           pointerEvents: 'auto',
           letterSpacing: '0.5px'
         }}>
-          &copy; {new Date().getFullYear()} <span style={{ color: 'var(--sw-yellow)', fontWeight: 600 }}>David Palricas</span>.
+          <span>Special thanks to <a href="https://poly.pizza/u/Quaternius" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--sw-yellow)', textDecoration: 'none' }}>Quaternius</a> for his models & animations found on Poly Pizza.</span>
+          <span>&copy; {new Date().getFullYear()} <span style={{ color: 'var(--sw-yellow)', fontWeight: 600 }}>David Palricas</span>.</span>
         </footer>
       </div>
 
