@@ -28,7 +28,7 @@ export const EXPERIENCE_DATA: ExperienceRecord[] = [
         mode: 'Hybrid',
         type: 'Research Fellowship',
         startDate: 'March 2026',
-        endDate: 'December 2026',
+        endDate: 'Present',
         description: [
             'Development of personalized Virtual Reality serious games aimed at the motor and cognitive rehabilitation of post-stroke patients.',
         ],
