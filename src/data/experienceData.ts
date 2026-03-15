@@ -30,7 +30,8 @@ export const EXPERIENCE_DATA: ExperienceRecord[] = [
         startDate: 'March 2026',
         endDate: 'Present',
         description: [
-            'Development of personalized Virtual Reality serious games aimed at the motor and cognitive rehabilitation of post-stroke patients.',
+            'Design and development of a personalized serious game prototype in a Virtual Reality environment to support the rehabilitation process for stroke survivors',
+            'Execution of tests of the developed prototype in a laboratory environment.'
         ],
         demoLink: 'https://youtu.be/qCmjLENJX1o?si=hU0D9kyJ9aJgXwD8', 
         technologies: ['Unity', 'C#', 'Meta SDK', 'Blender', 'Git', 'FMOD Studio'],
