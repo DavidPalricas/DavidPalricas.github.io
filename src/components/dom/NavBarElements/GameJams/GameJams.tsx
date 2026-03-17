@@ -2,10 +2,16 @@ import React from 'react';
 import { GAMEJAM_DATA, type GameJamRecord } from '../../../../data/gameJamsData';
 import './GameJams.css';
 
+/**
+ * Props for the Game Jams panel.
+ */
 interface GameJamsProps {
   onClose: () => void;
 }
 
+/**
+ * Renders one game jam timeline entry.
+ */
 const GameJamNode: React.FC<{ data: GameJamRecord }> = React.memo(({ data }) => (
   <article className="jam-node">
     <div className="node-marker" />
@@ -69,7 +75,7 @@ const GameJamNode: React.FC<{ data: GameJamRecord }> = React.memo(({ data }) => 
         )}
       </div>
 
-      <ul className="node-technologies" aria-label="Tecnologias utilizadas">
+      <ul className="node-technologies" aria-label="Technologies used">
         {data.technologies.map((tech) => (
           <li key={tech} className="tech-chip">{tech}</li>
         ))}
@@ -78,6 +84,9 @@ const GameJamNode: React.FC<{ data: GameJamRecord }> = React.memo(({ data }) => 
   </article>
 ));
 
+/**
+ * Game Jams panel with timeline entries and external links.
+ */
 export const GameJams: React.FC<GameJamsProps> = ({ onClose }) => {
   return (
     <section className="jam-panel">

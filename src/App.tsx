@@ -15,18 +15,21 @@ import { Contact } from './components/dom/NavBarElements/Contact/Contact';
 import { SECTIONS } from './config';
 import './components/dom/NavBarElements/NavBarElement.css';
 
+/**
+ * Root application component that composes the DOM overlay and the 3D scene.
+ */
 const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
   
-  // Estado rigoroso para monitorização do foco do sistema operativo
+  // Strict state used to track operating system window focus.
   const [isWindowFocused, setIsWindowFocused] = useState<boolean>(true);
 
   useEffect(() => {
     const handleFocus = () => setIsWindowFocused(true);
     const handleBlur = () => {
       setIsWindowFocused(false);
-      setHoveredSection(null); // Limpa resíduos de hover no DOM forçadamente
+      setHoveredSection(null); // Forcefully clears residual hover state from the DOM.
     };
 
     window.addEventListener('focus', handleFocus);
@@ -44,26 +47,26 @@ const App: React.FC = () => {
       
       if (isClosing) {
         console.log('[Sistema] Interface fechada. Executar rotina GSAP para reposição da câmara na origem.');
-        // TODO: Inserir GSAP tween para reset da câmara -> gsap.to(camera.position, { x: 0, y: 2, z: 10, duration: 1.5, ease: 'power3.inOut' })
+        // TODO: Add GSAP tween to reset the camera -> gsap.to(camera.position, { x: 0, y: 2, z: 10, duration: 1.5, ease: 'power3.inOut' })
         return null;
       }
 
       if (worldPosition) {
         console.log(`[Sistema] Navegação para ${sectionId}. Executar GSAP para alvo vetorial:`, worldPosition);
-        // TODO: Inserir GSAP tween interpolando a câmara baseada no vetor de worldPosition do Planeta alvo
+        // TODO: Add GSAP tween that interpolates camera movement based on the target planet worldPosition vector
       }
 
       return sectionId;
     });
   }, []);
 
-  // Máquina de estados boleana para oclusão de Raycast no WebGL
+  // Boolean state machine for WebGL raycast occlusion.
   const interactionEnabled = activeSection === null && isWindowFocused;
 
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
       
-      {/* CAMADA DOM - Topologia Achatada */}
+      {/* DOM LAYER - Flattened topology */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
         <Navbar 
           activeSection={activeSection} 
@@ -71,7 +74,7 @@ const App: React.FC = () => {
           onNavigate={handleNavigation} 
         />
         
-        {/* Renderização Persistente (GPU Warm-up). Os componentes nunca são destruídos, apenas ocultados via hardware acceleration. */}
+        {/* Persistent render pass (GPU warm-up). Components are never unmounted, only hidden via hardware acceleration. */}
         <div className={`panel-wrapper ${activeSection === 'about' ? 'visible' : 'hidden'}`}>
           <About onClose={() => handleNavigation(null)} />
         </div>
@@ -91,7 +94,7 @@ const App: React.FC = () => {
           <Contact onClose={() => handleNavigation(null)} />
         </div>
         
-        {/* Assinatura / Copyright / Créditos */}
+        {/* Signature / Copyright / Credits */}
         <footer style={{ 
           position: 'absolute', 
           bottom: '2rem', 
@@ -111,7 +114,7 @@ const App: React.FC = () => {
         </footer>
       </div>
 
-      {/* CAMADA WEBGL - Hardware Acceleration isolada */}
+      {/* WEBGL LAYER - Isolated hardware acceleration */}
       <Canvas
         style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
         camera={{ position: [0, 2, 20], fov: 45, near: 0.1, far: 1000 }}

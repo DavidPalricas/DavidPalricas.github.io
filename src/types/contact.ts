@@ -1,3 +1,6 @@
+/**
+ * Canonical animation names exported by the contact character GLB.
+ */
 export const CharacterAction = {
   IDLE: 'CharacterArmature|Idle_Gun',
   NODDING: 'CharacterArmature|Yes',
@@ -6,4 +9,7 @@ export const CharacterAction = {
   ERROR: 'CharacterArmature|Death' 
 } as const;
 
+/**
+ * Union type of all available contact character animation states.
+ */
 export type CharacterAction = typeof CharacterAction[keyof typeof CharacterAction];

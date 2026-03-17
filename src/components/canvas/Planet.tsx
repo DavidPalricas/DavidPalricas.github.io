@@ -3,17 +3,23 @@ import { useGLTF } from '@react-three/drei';
 import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 
+/**
+ * Props for a clickable planet in the 3D navigation ring.
+ */
 interface PlanetProps {
   id: string; 
   name?: string; 
   position: [number, number, number];
   onClick: (targetPosition: THREE.Vector3) => void;
   onHoverStateChange: (id: string | null) => void;
-  interactionEnabled: boolean; // Prop de controlo estrito
+  interactionEnabled: boolean; // Strict interaction control prop.
 }
 
 const BASE_PATH = '/models/planets/';
 
+/**
+ * Renders an interactive planet mesh used as a navigation target.
+ */
 export const Planet: React.FC<PlanetProps> = ({ id, name = 'default', position, onClick, onHoverStateChange, interactionEnabled }) => {
   const modelPath = `${BASE_PATH}${name}.glb`;
   const { scene } = useGLTF(modelPath);
@@ -21,7 +27,7 @@ export const Planet: React.FC<PlanetProps> = ({ id, name = 'default', position, 
   
   const [isHovered, setIsHovered] = useState(false);
 
-  // Força o reset do cursor e do estado se a interação for desativada enquanto o ponteiro está sobre a malha
+  // Forces cursor/state reset if interaction is disabled while pointer is over the mesh.
   useEffect(() => {
     if (!interactionEnabled && isHovered) {
       setIsHovered(false);
@@ -32,7 +38,7 @@ export const Planet: React.FC<PlanetProps> = ({ id, name = 'default', position, 
   useFrame((_, delta) => {
     if (!planetRef.current) return;
     
-    // Se a interação estiver inibida, o alvo vetorial é forçado a 1.0 absoluto
+    // If interaction is disabled, target scale is forced to absolute 1.0.
     const targetScale = (isHovered && interactionEnabled) ? 1.2 : 1.0;
     
     planetRef.current.scale.lerp(

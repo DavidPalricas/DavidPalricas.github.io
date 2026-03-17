@@ -2,10 +2,16 @@ import React from 'react';
 import { EDUCATION_DATA, PROFILE_DATA, type EducationRecord, type LinkRecord } from '../../../../data/aboutData';
 import './About.css';
 
+/**
+ * Props for the About panel.
+ */
 interface AboutProps {
   onClose: () => void;
 }
 
+/**
+ * Renders a compact icon based on profile link type.
+ */
 const IconRenderer: React.FC<{ type: LinkRecord['type'] }> = React.memo(({ type }) => {
   const baseProps = { viewBox: "0 0 24 24", width: "16", height: "16", fill: "currentColor" };
   
@@ -21,6 +27,9 @@ const IconRenderer: React.FC<{ type: LinkRecord['type'] }> = React.memo(({ type 
   }
 });
 
+/**
+ * Renders one education timeline entry.
+ */
 const EducationNode: React.FC<{ data: EducationRecord }> = React.memo(({ data }) => (
   <div className="education-node">
     <div className="node-marker" />
@@ -53,6 +62,9 @@ const EducationNode: React.FC<{ data: EducationRecord }> = React.memo(({ data })
   </div>
 ));
 
+/**
+ * About panel with profile information and education timeline.
+ */
 export const About: React.FC<AboutProps> = ({ onClose }) => {
   return (
     <section className="about-panel">

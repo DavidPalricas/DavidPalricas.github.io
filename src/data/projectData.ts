@@ -1,5 +1,11 @@
+/**
+ * Project classification used in the Projects section.
+ */
 export type ProjectType = 'Academic' | 'Personal' | 'Research' | 'Research & Academic';
 
+/**
+ * Describes one project entry displayed in the portfolio.
+ */
 export interface ProjectRecord {
   id: string;
   title: string;
@@ -14,6 +20,9 @@ export interface ProjectRecord {
   sourceLink?: string;
 }
 
+/**
+ * Projects showcased in the Projects section.
+ */
 export const PROJECT_DATA: ProjectRecord[] = [
   {
     id: 'country-fair-vr',

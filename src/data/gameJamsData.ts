@@ -1,3 +1,6 @@
+/**
+ * Describes one game jam participation entry.
+ */
 export interface GameJamRecord {
   id: string;
   title: string;
@@ -12,6 +15,9 @@ export interface GameJamRecord {
   sourceLink?: string;
 }
 
+/**
+ * Game jam participations shown in the portfolio.
+ */
 export const GAMEJAM_DATA: GameJamRecord[] = [
   {
     id: 'global-game-jam-26',

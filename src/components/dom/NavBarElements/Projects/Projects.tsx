@@ -2,10 +2,16 @@ import React from 'react';
 import { PROJECT_DATA, type ProjectRecord } from '../../../../data/projectData';
 import './Projects.css';
 
+/**
+ * Props for the Projects panel.
+ */
 interface ProjectsProps {
   onClose: () => void;
 }
 
+/**
+ * Renders one project timeline entry.
+ */
 const ProjectNode: React.FC<{ data: ProjectRecord }> = React.memo(({ data }) => (
   <article className="project-node">
     <div className="node-marker" />
@@ -13,7 +19,7 @@ const ProjectNode: React.FC<{ data: ProjectRecord }> = React.memo(({ data }) => 
       <header className="node-header">
         <h3 className="node-title">{data.title}</h3>
         <div className="node-meta">
-          {/* Lógica de renderização condicional do intervalo de datas */}
+          {/* Conditional rendering logic for the project date range. */}
           <time className="node-date">
             {data.startYear}{data.endYear && ` — ${data.endYear}`}
           </time>
@@ -59,7 +65,7 @@ const ProjectNode: React.FC<{ data: ProjectRecord }> = React.memo(({ data }) => 
         </div>
       )}
 
-      <ul className="node-technologies" aria-label="Tecnologias utilizadas">
+      <ul className="node-technologies" aria-label="Technologies used">
         {data.technologies.map((tech) => (
           <li key={tech} className="tech-chip">{tech}</li>
         ))}
@@ -68,10 +74,13 @@ const ProjectNode: React.FC<{ data: ProjectRecord }> = React.memo(({ data }) => 
   </article>
 ));
 
+/**
+ * Projects panel with portfolio timeline entries.
+ */
 export const Projects: React.FC<ProjectsProps> = ({ onClose }) => {
   return (
     <section className="project-panel">
-      <button className="close-button" onClick={onClose} aria-label="Fechar Projetos">
+      <button className="close-button" onClick={onClose} aria-label="Close Projects">
         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="12" />

@@ -2,10 +2,16 @@ import React from 'react';
 import { PUBLICATION_DATA, type PublicationRecord } from '../../../../data/publicationsData';
 import './Publications.css';
 
+/**
+ * Props for the Publications panel.
+ */
 interface PublicationsProps {
   onClose: () => void;
 }
 
+/**
+ * Renders one publication timeline entry.
+ */
 const PublicationNode: React.FC<{ data: PublicationRecord }> = React.memo(({ data }) => (
   <article className="project-node">
     <div className="node-marker" />
@@ -63,10 +69,13 @@ const PublicationNode: React.FC<{ data: PublicationRecord }> = React.memo(({ dat
   </article>
 ));
 
+/**
+ * Publications panel with scientific output timeline entries.
+ */
 export const Publications: React.FC<PublicationsProps> = ({ onClose }) => {
   return (
     <section className="project-panel">
-      <button className="close-button" onClick={onClose} aria-label="Fechar Publicações">
+      <button className="close-button" onClick={onClose} aria-label="Close Publications">
         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="12" />

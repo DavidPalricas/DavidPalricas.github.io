@@ -1,5 +1,11 @@
+/**
+ * Publication lifecycle status.
+ */
 export type PublicationStatus = 'Published' | 'Accepted' | 'Under Review';
 
+/**
+ * Describes one publication entry shown in the Publications section.
+ */
 export interface PublicationRecord {
   id: string;
   title: string;
@@ -15,6 +21,9 @@ export interface PublicationRecord {
   awardLink?: string;
 }
 
+/**
+ * Scientific publications and submissions displayed in the portfolio.
+ */
 export const PUBLICATION_DATA: PublicationRecord[] = [
 {
     id:'from-standardization-to-personalization',

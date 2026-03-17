@@ -17,6 +17,9 @@ const LIMIT_Y = 6;
 const LIMIT_Z = 14;
 const Z_OFFSET = 3;
 
+/**
+ * Props for one procedural spaceship instance.
+ */
 interface SpaceshipProps {
   modelPath: string;
   startPosition: THREE.Vector3;
@@ -27,7 +30,7 @@ interface SpaceshipProps {
 }
 
 const Spaceship = memo(({ modelPath, startPosition, startRotation, speed, scale, interactionEnabled }: SpaceshipProps) => {
-  // pivô: controla posição e orientação de voo
+  // Pivot controls flight position and orientation.
   const pivotRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF(modelPath);
   const initialized = useRef(false);
@@ -41,7 +44,7 @@ const Spaceship = memo(({ modelPath, startPosition, startRotation, speed, scale,
       initialized.current = true;
     }
 
-    // Mover o pivô no seu próprio eixo Z local — a nave voa sempre para a sua frente
+    // Move pivot in local Z axis so the ship always flies forward.
     pivotRef.current.translateZ(speed * delta);
 
     const pos = pivotRef.current.position;
@@ -57,9 +60,9 @@ const Spaceship = memo(({ modelPath, startPosition, startRotation, speed, scale,
   });
 
   return (
-    // Pivô invisível — define direção e posição
+    // Invisible pivot that defines direction and position.
     <group ref={pivotRef}>
-      {/* Modelo filho — corrige apenas o offset visual do GLB sem interferir no voo */}
+      {/* Child model adjusts only GLB visual offset without affecting flight behavior. */}
       <group scale={[scale, scale, scale]}>
         <Clone object={scene} castShadow rotation={[0, 0, 0]} />
       </group>
@@ -67,10 +70,16 @@ const Spaceship = memo(({ modelPath, startPosition, startRotation, speed, scale,
   );
 });
 
+/**
+ * Props for the fleet controller component.
+ */
 interface SpaceShipsProps {
   interactionEnabled: boolean;
 }
 
+/**
+ * Generates and renders a fleet of procedural spaceships in the background.
+ */
 export const SpaceShips = memo(({ interactionEnabled }: SpaceShipsProps) => {
   const fleetData = useMemo(() => {
     const NUM_SHIPS = 20;
@@ -84,7 +93,7 @@ export const SpaceShips = memo(({ interactionEnabled }: SpaceShipsProps) => {
         THREE.MathUtils.randFloatSpread(LIMIT_Z * 2) + Z_OFFSET
       );
 
-      // Rotação do pivô = direção de voo. O modelo segue automaticamente.
+      // Pivot rotation defines flight direction; the model follows automatically.
       const startRotation = new THREE.Euler(
         THREE.MathUtils.randFloatSpread(Math.PI),
         THREE.MathUtils.randFloat(0, Math.PI * 2),

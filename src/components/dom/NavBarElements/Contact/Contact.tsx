@@ -6,16 +6,25 @@ import { ContactCharacter } from '../../../canvas/ContactCharacter';
 import { CharacterAction } from '../../../../types/contact';
 import './Contact.css'; 
 
+/**
+ * Props for the Contact panel.
+ */
 interface ContactProps {
   onClose: () => void;
 }
 
+/**
+ * Notification state used by the contact form UI overlay.
+ */
 type NotificationState = {
   visible: boolean;
   type: 'success' | 'error';
   message: string;
 } | null;
 
+/**
+ * Contact panel containing a form and a synchronized animated 3D character.
+ */
 export const Contact: React.FC<ContactProps> = ({ onClose }) => {
   const [characterState, setCharacterState] = useState<CharacterAction>(CharacterAction.IDLE);
   const [notification, setNotification] = useState<NotificationState>(null);
@@ -63,7 +72,7 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Falha na submissão da API de contacto.');
+        throw new Error(result.error || 'Contact API submission failed.');
       }
       
       setCharacterState(CharacterAction.SUCCESS);
@@ -76,7 +85,7 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
       }, timeToResetCharacter);
 
     } catch (error) {
-      console.error('Falha crítica no envio:', error);
+      console.error('Critical send failure:', error);
       setCharacterState(CharacterAction.ERROR); 
       setNotification({ visible: true, type: 'error', message: 'Error sending email try later' });
 
@@ -89,7 +98,7 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
 
   return (
     <section className="project-panel contact-panel">
-      <button className="close-button" onClick={onClose} aria-label="Fechar Contacto">
+      <button className="close-button" onClick={onClose} aria-label="Close Contact">
         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
           <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="12" />
         </svg>
@@ -152,7 +161,7 @@ export const Contact: React.FC<ContactProps> = ({ onClose }) => {
             <ContactCharacter currentState={characterState} />
           </Canvas>
           
-          {/* Overlay de Notificação UI Desacoplada do DOM de rendering 3D */}
+          {/* Notification UI overlay decoupled from the 3D rendering DOM. */}
           {notification?.visible && (
             <div className={`notification-popup ${notification.type}`}>
               {notification.type === 'success' ? (

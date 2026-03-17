@@ -1,6 +1,16 @@
+/**
+ * Work arrangement mode.
+ */
 export type WorkMode = 'OnSite' | 'Hybrid' | 'Remote';
+
+/**
+ * Employment or collaboration type.
+ */
 export type WorkType = 'Internship' | 'Apprenticeship' | 'Research Fellowship';
 
+/**
+ * Describes one professional or research experience item.
+ */
 export interface ExperienceRecord {
   id: string;
   title: string;
@@ -18,6 +28,9 @@ export interface ExperienceRecord {
   certificateLink?: string;
 }
 
+/**
+ * Professional experiences shown in the Experience section.
+ */
 export const EXPERIENCE_DATA: ExperienceRecord[] = [
     {
         id: 'ieeta-vr',

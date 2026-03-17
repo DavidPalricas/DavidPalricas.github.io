@@ -2,17 +2,23 @@ import React from 'react';
 import { EXPERIENCE_DATA, type ExperienceRecord } from '../../../../data/experienceData';
 import './Experience.css';
 
+/**
+ * Props for the Experience panel.
+ */
 interface ExperienceProps {
   onClose: () => void;
 }
 
+/**
+ * Renders one timeline node for a professional experience entry.
+ */
 const ExperienceNode: React.FC<{ data: ExperienceRecord }> = React.memo(({ data }) => (
   <article className="experience-node">
     <div className="node-marker" />
     <div className="node-content">
       <header className="node-header">
         <h3 className="node-title">{data.title}</h3>
-        {/* Remoção do link, revertido para texto simples */}
+        {/* Link removed; reverted to plain text. */}
         <span className="node-company">{data.company}</span>
         <div className="node-meta">
           <time className="node-date">{data.startDate} — {data.endDate}</time>
@@ -36,7 +42,7 @@ const ExperienceNode: React.FC<{ data: ExperienceRecord }> = React.memo(({ data 
         ))}
       </div>
 
-      {/* Renderização Condicional Expandida - Geração estrita apenas se houver links */}
+      {/* Expanded conditional rendering: only generates actions when links exist. */}
       {(data.companyLink || data.projectLink || data.demoLink || data.certificateLink) && (
         <div className="node-actions">
           {data.companyLink && (
@@ -74,7 +80,7 @@ const ExperienceNode: React.FC<{ data: ExperienceRecord }> = React.memo(({ data 
         </div>
       )}
 
-      <ul className="node-technologies" aria-label="Tecnologias utilizadas">
+      <ul className="node-technologies" aria-label="Technologies used">
         {data.technologies.map((tech) => (
           <li key={tech} className="tech-chip">{tech}</li>
         ))}
@@ -83,10 +89,13 @@ const ExperienceNode: React.FC<{ data: ExperienceRecord }> = React.memo(({ data 
   </article>
 ));
 
+/**
+ * Experience panel with professional timeline entries.
+ */
 export const Experience: React.FC<ExperienceProps> = ({ onClose }) => {
   return (
     <section className="experience-panel">
-      <button className="close-button" onClick={onClose} aria-label="Fechar Experiência">
+      <button className="close-button" onClick={onClose} aria-label="Close Experience">
         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="12" />

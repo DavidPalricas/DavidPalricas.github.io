@@ -1,9 +1,15 @@
+/**
+ * Describes an external profile or contact link shown in the About section.
+ */
 export interface LinkRecord {
   label: string;
   url: string;
   type: 'location' | 'linkedin' | 'github' | 'itch' | 'orcid';
 }
 
+/**
+ * Describes one education entry in the academic timeline.
+ */
 export interface EducationRecord {
   id: string;
   degree: string;
@@ -15,6 +21,9 @@ export interface EducationRecord {
   courseLink?: string;     // Opcional
 }
 
+/**
+ * Main profile content used by the About section.
+ */
 export const PROFILE_DATA = {
   name: "David Palricas",
   title: "Student Researcher at IEETA and Computer and Informatics Engineer",
@@ -33,6 +42,9 @@ export const PROFILE_DATA = {
   ] as LinkRecord[]
 };
 
+/**
+ * Academic and education history displayed in the About section.
+ */
 export const EDUCATION_DATA: EducationRecord[] = [
   {
     id: 'msc',
