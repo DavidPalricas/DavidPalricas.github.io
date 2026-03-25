@@ -55,15 +55,17 @@ Approach: A proposal," in IEEE Conference on Virtual Reality and 3D User Interfa
   id: 'leveraging-social-interaction',
   title: 'Leveraging Social Interaction: Stroke Rehabilitation using eXtended Reality',
   conference: 'IEEE Computer Graphics and Applications',
-  status: 'Accepted',
+  status: 'Published',
   role: 'Co-Author',
+  publishYear: 2026,
   reference: `B. Marques, S. Oliveira, I. Figueiredo, P. Amorim, M. Leite, C. Ferreira, S. Silva, D. Palricas, P. Dias, B. S. Santos, (2026). "Leveraging Social Interaction: Stroke Rehabilitation using eXtended Reality", IEEE Computer Graphics and Applications.`,
   description: [
     'This paper synthesizes the cumulative findings of a longitudinal research line focused on integrating social interaction into stroke rehabilitation.',
     'It charts the technical and clinical evolution from initial single-user Virtual Reality (VR) prototypes to a comprehensive multi-user eXtended Reality (XR) framework.',
     'Grounded in a Human-Centered Design (HCD) methodology, the work validates the shift from isolated therapies to collaborative and competitive dynamics.',
     'The study also evaluates the ecological validity of transitioning between VR and Augmented Reality (AR) and presents the resulting ecosystem tools, REVIVE and ADAPT, engineered to empower healthcare professionals with real-time monitoring and data-driven personalization.'
-  ]
+  ],
+  paperLink: 'https://ieeexplore.ieee.org/document/11455520'
 },
 {
     id: 'exploring-social-dynamics',
